@@ -1,0 +1,2 @@
+Execute "shell" and arguments "ls ~"
+Execute "play_voice" and arguments "The files in your home directory are as follows: Document 0 Document 1 Document 2"
