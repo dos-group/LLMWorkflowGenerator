@@ -1,0 +1,73 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please tell me all files in my home directory
+
+####################################################################################################
+
+
+
+```python
+def list_home_directory_files():
+    # Define the home directory path
+    home_directory = "/home/user"  # Adjust the path as needed
+    
+    # Use the shell command to list files in the home directory
+    command = f"ls {home_directory}"
+    
+    # Execute the shell command
+    result = shell(command)
+    
+    # Print the list of files
+    print_screen(result)
+
+# Call the function to list files
+list_home_directory_files()
+```
+
+####################################################################################################
+
+
+def list_home_directory_files():
+    # Define the home directory path
+    home_directory = "/home/user"  # Adjust the path as needed
+    
+    # Use the shell command to list files in the home directory
+    command = f"ls {home_directory}"
+    
+    # Execute the shell command
+    result = shell(command)
+    
+    # Print the list of files
+    print_screen(result)
+
+# Call the function to list files
+list_home_directory_files()
+
+
+####################################################################################################
+
+Execute "shell" and arguments "ls /home/user"
+Execute "print_screen" and arguments "Document 0
+Document 1
+Document 2"
+
+####################################################################################################
+
+Success (total 2.061260156s, ttft 544.403437ms)
+
+####################################################################################################
+

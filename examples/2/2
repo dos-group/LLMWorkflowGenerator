@@ -1,0 +1,56 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please tell me the current temperature
+
+####################################################################################################
+
+
+
+```python
+def tell_current_temperature():
+    temperature = get_temperature()
+    response = f"The current temperature is {temperature} degrees."
+    print_screen(response)
+    play_voice(response)
+
+tell_current_temperature()
+```
+
+####################################################################################################
+
+
+def tell_current_temperature():
+    temperature = get_temperature()
+    response = f"The current temperature is {temperature} degrees."
+    print_screen(response)
+    play_voice(response)
+
+tell_current_temperature()
+
+
+####################################################################################################
+
+Execute "get_temperature" and arguments 
+Execute "print_screen" and arguments "The current temperature is 37 degrees."
+Execute "play_voice" and arguments "The current temperature is 37 degrees."
+
+####################################################################################################
+
+Success (total 0.927692187s, ttft 484.410729ms)
+
+####################################################################################################
+

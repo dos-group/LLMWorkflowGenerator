@@ -1,0 +1,67 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please tell me all files in my home directory
+
+####################################################################################################
+
+
+
+```python
+import os
+
+def list_files_in_home_directory():
+    home_directory = os.path.expanduser("~")
+    files = os.listdir(home_directory)
+    
+    for file in files:
+        file_id = find_file_id(file)
+        if file_id is not None:
+            print_screen(f"File: {file}, ID: {file_id}")
+
+list_files_in_home_directory()
+```
+
+####################################################################################################
+
+
+import os
+
+def list_files_in_home_directory():
+    home_directory = os.path.expanduser("~")
+    files = os.listdir(home_directory)
+    
+    for file in files:
+        file_id = find_file_id(file)
+        if file_id is not None:
+            print_screen(f"File: {file}, ID: {file_id}")
+
+list_files_in_home_directory()
+
+
+####################################################################################################
+
+Failed (total 3.092528906s, ttft 479.47224ms)
+Traceback (most recent call last):
+  File "main.py", line 240, in request
+    exec(
+  File "<string>", line 13, in <module>
+  File "<string>", line 5, in list_files_in_home_directory
+NameError: name 'os' is not defined
+
+
+####################################################################################################
+
