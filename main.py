@@ -55,6 +55,14 @@ def stub_function(name, return_value = None):
 
 FUNCTIONS = [
     Function(
+        "ask_search_engine",
+        [
+            Argument("expression", "String"),
+        ],
+        "Integer",
+        stub_function("search_engine"),
+    ),
+    Function(
         "find_file_id",
         [
             Argument("expression", "String"),
@@ -170,14 +178,15 @@ Write Python 3 code only, which uses the application programming interface for t
 
 ####################################################################################################
 
-async def request(url, key, model, prompt):
+async def request(url, key, model, temperature, prompt):
     await aprint("####################################################################################################\n")
     await aprint(functions_prompt)
     await aprint("\n####################################################################################################\n")
 
-    request_headers = {
-        "Authorization": "Bearer " + key,
-    }
+    request_headers = {}
+
+    if key is not None:
+        request_headers["Authorization"] = "Bearer " + key
 
     request_body={
         "model": model,
@@ -187,6 +196,9 @@ async def request(url, key, model, prompt):
         ],
         "stream": True,
     }
+
+    if temperature is not None:
+        request_body["temperature"] = temperature
 
     start = time_ns()
     time_to_first_token_ns = None
@@ -256,15 +268,18 @@ async def request(url, key, model, prompt):
 
 ####################################################################################################
 
-DEFAULT_MODEL = "gpt-4o-mini"
+DEFAULT_ENDPOINT_URL = "https://api.openai.com/v1/chat/completions"
+DEFAULT_MODEL_NAME = "gpt-4o-mini"
+DEFAULT_MODEL_TEMPERATURE = 0.0
 
 ####################################################################################################
 
 async def main():
     await request(
-        "https://api.openai.com/v1/chat/completions",
-        environ["OPENAI_KEY"],
-        environ.get("MODEL", DEFAULT_MODEL),
+        environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
+        environ.get("ENDPOINT_KEY", None),
+        environ.get("MODEL_NAME", DEFAULT_MODEL_NAME),
+        environ.get("MODEL_TEMPERATURE", DEFAULT_MODEL_TEMPERATURE),
         await ainput(),
     );
 

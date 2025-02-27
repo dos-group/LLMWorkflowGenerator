@@ -9,10 +9,12 @@ virtualenv
 
 ## Environment Variables Overview
 
-| Key        | Description                                      | Default     |
-|------------|--------------------------------------------------|-------------|
-| OPENAI_KEY | OpenAI API key for the chat completions endpoint | -           |
-| MODEL      | LLM model name                                   | gpt-4o-mini |
+| Key               | Description                               | Default                                    |
+|-------------------|-------------------------------------------|--------------------------------------------|
+| ENDPOINT_KEY      | API key for the chat completions endpoint | -                                          |
+| ENDPOINT_URL      | URL of the chat completions endpoint      | https://api.openai.com/v1/chat/completions |
+| MODEL_NAME        | LLM model name                            | gpt-4o-mini                                |
+| MODEL_TEMPERATURE | LLM model temperature                     | 0                                          |
 
 ## Environment Setup
 
