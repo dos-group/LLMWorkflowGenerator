@@ -1,5 +1,0 @@
-Execute "find_file_id" and arguments "car title"
-Execute "find_contact_id" and arguments "insurance company"
-Execute "find_contact_email" and arguments "1"
-Execute "send_email" and arguments "john.doe@example.com", "Car Title Submission", "Please find attached my car title.", "[1]"
-Execute "print_screen" and arguments "Car title sent to insurance company."

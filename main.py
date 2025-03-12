@@ -4,11 +4,14 @@
 
 from aioconsole import aprint, ainput
 from aiohttp import ClientSession, MultipartReader
-from asyncio import run
 from json import loads
-from os import environ
-from time import time_ns
+from os import environ, listdir, path, get_terminal_size
+from random import randint
 from traceback import format_exc
+from inspect import getfullargspec
+import asyncio
+import subprocess
+import time
 
 ####################################################################################################
 
@@ -41,6 +44,30 @@ class Function:
     def format(self):
         return "function " + self.name + "(" + self.format_arguments() + ")" + self.format_return_type()
 
+class PythonFunction:
+    def __init__(self, name, function):
+        self.__name = name
+        self.__function = function
+
+    def callback(self):
+        return self.function
+
+    def format(self):
+        specification = getfullargspec(self.__function)
+
+        arguments = ", ".join(
+            map(
+                lambda argument_key: argument_key + ": " + specification.annotations[argument_key],
+                specification.args,
+            )
+        )
+
+        return_type = specification.annotations["return"]
+        if return_type is None:
+            return_type = "void"
+
+        return "function " + self.__name + "(" + arguments + "): " + return_type
+
 ####################################################################################################
 
 def stub_function(name, return_value = None):
@@ -53,22 +80,62 @@ def stub_function(name, return_value = None):
 
 ####################################################################################################
 
+def find_file(expression):
+    directory = "files"
+
+    for file_name in listdir(directory):
+        if not path.isfile(path.join(directory, file_name)):
+            continue
+
+        if expression not in file_name:
+            continue
+
+        return file_name
+
+    return None
+
+def find_all_audio_files():
+    directory = "files"
+
+    return [
+        f for f in listdir(directory) if path.isfile(path.join(directory, f))
+    ]
+
+def play_audio_file(file_path):
+    result = subprocess.run(
+        ["termux-media-player", "play", path.join("files", file_path)],
+        text=True,
+        check=True,
+        capture_output=True,
+    )
+
+    print(result.stdout)
+
+def stop_audio_player():
+    result = subprocess.run(
+        ["termux-media-player", "stop"],
+        text=True,
+        check=True,
+        capture_output=True,
+    )
+
+    print(result.stdout)
+
+def sleep(seconds: 'Integer') -> None:
+    time.sleep(seconds)
+
+print(PythonFunction("sleep", sleep).format())
+
+####################################################################################################
+
 FUNCTIONS = [
     Function(
-        "ask_search_engine",
+        "find_file",
         [
             Argument("expression", "String"),
         ],
-        "Integer",
-        stub_function("search_engine"),
-    ),
-    Function(
-        "find_file_id",
-        [
-            Argument("expression", "String"),
-        ],
-        "Integer|null",
-        stub_function("find_file_id", 1),
+        "String|null",
+        find_file,
     ),
     Function(
         "find_contact_id",
@@ -105,10 +172,24 @@ FUNCTIONS = [
     Function(
         "play_audio_file",
         [
-            Argument("file", "File"),
+            Argument("filePath", "String"),
         ],
         None,
-        stub_function("play_audio_file"),
+        play_audio_file,
+    ),
+    Function(
+        "stop_audio_player",
+        [],
+        None,
+        stop_audio_player,
+    ),
+    Function(
+        "sleep",
+        [
+            Argument("seconds", "Integer")
+        ],
+        None,
+        sleep,
     ),
     Function(
         "send_email",
@@ -116,7 +197,7 @@ FUNCTIONS = [
             Argument("email", "String"),
             Argument("subject", "String"),
             Argument("text", "String"),
-            Argument("attachments", "Collection<Integer>"),
+            Argument("attachments", "Collection<String>"),
         ],
         None,
         stub_function("send_email"),
@@ -127,7 +208,7 @@ FUNCTIONS = [
             Argument("email", "String"),
             Argument("subject", "String"),
             Argument("text", "String"),
-            Argument("attachments", "Collection<Integer>"),
+            Argument("attachments", "Collection<String>"),
         ],
         None,
         stub_function("receive_email"),
@@ -155,6 +236,29 @@ FUNCTIONS = [
         "String",
         stub_function("shell", "Document 0\nDocument 1\nDocument 2"),
     ),
+    Function(
+        "find_files",
+        [
+            Argument("expression", "String"),
+        ],
+        "Collection<String>",
+        stub_function("find_files", [0, 1, 2, 3, 4]),
+    ),
+    Function(
+        "find_all_audio_files",
+        [],
+        "Collection<String>",
+        find_all_audio_files,
+    ),
+    Function(
+        "generate_random_number",
+        [
+            Argument("minimum", "Integer"),
+            Argument("maximum", "Integer"),
+        ],
+        "Integer",
+        lambda x, y: randint(x, y),
+    ),
 ]
 
 functions_prompt = "\n".join(
@@ -172,20 +276,27 @@ You have the following application programming interface:
 
 {functions_prompt}
 
-Write Python 3 code only, which uses the application programming interface for the instruction
+Write a Python 3 function, which uses the provided application programming interface for the instruction
 "{message}"
+
+Afterwards, execute the previously written Python 3 function. Do not use other functions, only those provided by the given application programming interface.
 """.format(message=message, functions_prompt=functions_prompt)
 
 ####################################################################################################
 
+async def print_separator(newlines = 0):
+    await aprint(str(get_terminal_size().columns * "#") + str(newlines * "\n"))
+
+####################################################################################################
+
 async def request(url, key, model, temperature, prompt):
-    await aprint("####################################################################################################\n")
+    await print_separator(0)
     await aprint(functions_prompt)
-    await aprint("\n####################################################################################################\n")
+    await print_separator(0)
 
     request_headers = {}
 
-    if key is not None:
+    if key is not None and len(key) > 0:
         request_headers["Authorization"] = "Bearer " + key
 
     request_body={
@@ -198,13 +309,13 @@ async def request(url, key, model, temperature, prompt):
     }
 
     if temperature is not None:
-        request_body["temperature"] = temperature
+        request_body["temperature"] = float(temperature)
 
-    start = time_ns()
+    start = time.time_ns()
     time_to_first_token_ns = None
 
-    await aprint(url, model, prompt)
-    await aprint("\n####################################################################################################\n")
+    await aprint(url, model, temperature, prompt)
+    await print_separator(0)
 
     async with ClientSession() as session:
         async with session.post(url, headers=request_headers, json=request_body) as response:
@@ -217,7 +328,7 @@ async def request(url, key, model, temperature, prompt):
                         continue
 
                     if time_to_first_token_ns is None:
-                        time_to_first_token_ns = time_ns() - start
+                        time_to_first_token_ns = time.time_ns() - start
 
                     if string == "[DONE]":
                         break
@@ -238,15 +349,14 @@ async def request(url, key, model, temperature, prompt):
             output = output.strip("\n\r ")
             code = output[output.index(left_marker) + len(left_marker):output.rindex(right_marker)]
 
-            elapsed_s = (time_ns() - start) / (10 ** 9)
+            elapsed_s = (time.time_ns() - start) / (10 ** 9)
             time_to_first_token_ms = time_to_first_token_ns / (10 ** 6)
 
-            await aprint("\n")
             await aprint(output)
-            await aprint("\n####################################################################################################\n")
+            await print_separator(0)
 
             await aprint(code)
-            await aprint("\n####################################################################################################\n")
+            await print_separator(0)
 
             try:
                 exec(
@@ -257,14 +367,14 @@ async def request(url, key, model, temperature, prompt):
                     {},
                 )
 
-                await aprint("\n####################################################################################################\n")
+                await print_separator(0)
 
                 await aprint("Success (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
             except Exception as e:
                 await aprint("Failed (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
                 await aprint(format_exc())
 
-            await aprint("\n####################################################################################################\n")
+            await print_separator(0)
 
 ####################################################################################################
 
@@ -285,4 +395,4 @@ async def main():
 
 ####################################################################################################
 
-run(main())
+asyncio.run(main())
