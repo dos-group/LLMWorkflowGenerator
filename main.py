@@ -4,11 +4,11 @@
 
 from aioconsole import aprint, ainput
 from aiohttp import ClientSession, MultipartReader
+from inspect import getfullargspec
 from json import loads
 from os import environ, listdir, path, get_terminal_size
 from random import randint
 from traceback import format_exc
-from inspect import getfullargspec
 import asyncio
 import subprocess
 import time
@@ -48,6 +48,10 @@ class PythonFunction:
     def __init__(self, name, function):
         self.__name = name
         self.__function = function
+
+    @property
+    def name(self):
+        return self.__name
 
     def callback(self):
         return self.function
@@ -101,7 +105,8 @@ def find_all_audio_files():
         f for f in listdir(directory) if path.isfile(path.join(directory, f))
     ]
 
-def play_audio_file(file_path):
+def play_audio_file(file_path: 'String'):
+    return
     result = subprocess.run(
         ["termux-media-player", "play", path.join("files", file_path)],
         text=True,
@@ -112,6 +117,7 @@ def play_audio_file(file_path):
     print(result.stdout)
 
 def stop_audio_player():
+    return
     result = subprocess.run(
         ["termux-media-player", "stop"],
         text=True,
@@ -124,7 +130,20 @@ def stop_audio_player():
 def sleep(seconds: 'Integer') -> None:
     time.sleep(seconds)
 
-print(PythonFunction("sleep", sleep).format())
+class FunctionFormatter:
+    def format(self, function):
+        pass
+
+class FunctionTable:
+    def __initialize__(self, formatter):
+        self.__functions = {}
+        self.__formatter = formatter
+
+    def register(self, name, function):
+        if name in self.__functions:
+            raise Exception("Function already registered")
+
+        pass
 
 ####################################################################################################
 
@@ -183,14 +202,7 @@ FUNCTIONS = [
         None,
         stop_audio_player,
     ),
-    Function(
-        "sleep",
-        [
-            Argument("seconds", "Integer")
-        ],
-        None,
-        sleep,
-    ),
+    PythonFunction("sleep", sleep),
     Function(
         "send_email",
         [
