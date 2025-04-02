@@ -1,0 +1,21 @@
+Execute "print_screen" and arguments "Berlin is the largest city in germany."
+################################################################################
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function send_email(email: String, subject: String, text: String, attachment_paths: Collection<String>): void
+function get_temperature(): Integer
+function shell(command: String): String
+function find_files(expression: String): Collection<String>
+function print_screen(text: String): void
+function sleep(seconds: Integer): void
+function find_all_audio_files(): Collection<String>
+function generate_random_number(inclusiveStart: Integer, exclusiveEnd: Integer): Integer
+function play_audio_file(file_path: String): void
+function find_file(expression: String): String|null
+function stop_audio_player(): void
+function query_llm(query: String): String
+################################################################################
+https://api.openai.com/v1/chat/completions gpt-4o 0.0 Which is the largest city in germany?
+################################################################################

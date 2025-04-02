@@ -21,7 +21,7 @@ import time
 async def request_chat_completions(url, model, role, key, prompt, temperature):
     request_headers = {}
 
-    if self.__key is not None and len(_key) > 0:
+    if key is not None and len(key) > 0:
         request_headers["Authorization"] = "Bearer " + key
 
     request_body={
@@ -44,9 +44,6 @@ async def request_chat_completions(url, model, role, key, prompt, temperature):
 
     start_time = time.time_ns()
     time_to_first_token_ns = None
-
-    await aprint(url, model, temperature, prompt)
-    await print_separator(0)
 
     async with ClientSession() as session:
         async with session.post(url, headers=request_headers, json=request_body) as response:
@@ -275,6 +272,7 @@ async def print_separator(newlines = 0):
 class TestCase:
     def __init__(
             self,
+            event_loop,
             function_table,
             url,
             key,
@@ -283,6 +281,7 @@ class TestCase:
             prompt,
             correct_code = None,
     ):
+        self.__event_loop = event_loop
         self.__function_table = function_table
         self.__url = url
         self.__key = key
@@ -290,6 +289,10 @@ class TestCase:
         self.__temperature = temperature
         self.__prompt = prompt
         self.__correct_code = correct_code
+
+    @property
+    def event_loop(self):
+        return self.__event_loop
 
     @property
     def url(self):
@@ -311,7 +314,7 @@ class TestCase:
         if context is None:
             context = {}
 
-        context["test_case"] = self
+        context["get_test_case"] = lambda: self
 
         await print_separator(0)
         await aprint(table.format_prompt_specification())
@@ -349,92 +352,65 @@ class TestCase:
             self.__temperature,
         )
 
-        async with ClientSession() as session:
-            async with session.post(self.__url, headers=request_headers, json=request_body) as response:
-                if response.status != 200:
-                    raise "Status is not 200"
+        output = result["output"]
+        elapsed_s = result["elapsed_s"]
+        time_to_first_token_ms = result["time_to_first_token_ms"]
 
-                output = ""
+        await aprint(output)
+        await print_separator(0)
 
-                async for chunk in response.content:
-                    if chunk:
-                        string = chunk.decode("utf-8").lstrip("data: ").strip()
-                        if len(string) == 0:
-                            continue
+        marker = "```"
 
-                        if time_to_first_token_ns is None:
-                            time_to_first_token_ns = time.time_ns() - start_time
+        left_markers = [marker + "python3", marker + "python", marker]
+        right_marker = marker
 
-                        if string == "[DONE]":
-                            break
+        output = output.strip("\n\r ")
 
-                        data = loads(string, strict=False)
+        start = None
+        start_padding = None
 
-                        if 'content' in data["choices"][0]["delta"]:
-                            output = output + data["choices"][0]["delta"]["content"]
-                        else:
-                            break
-                    else:
-                        break
+        for left_marker in left_markers:
+            index = output.find(left_marker)
 
-                elapsed_s = (time.time_ns() - start_time) / (10 ** 9)
-                time_to_first_token_ms = time_to_first_token_ns / (10 ** 6)
+            if index < 0:
+                continue
 
-                await aprint(output)
-                await print_separator(0)
+            start = index
+            start_padding = len(left_marker)
 
-                marker = "```"
+            break
 
-                left_markers = [marker + "python3", marker + "python", marker]
-                right_marker = marker
+        end = output.find(right_marker, start + start_padding)
+        if end < 0:
+            end = len(output)
 
-                output = output.strip("\n\r ")
+        code = output[start + start_padding:end]
 
-                start = None
-                start_padding = None
+        await aprint(code)
+        await print_separator(0)
 
-                for left_marker in left_markers:
-                    index = output.find(left_marker)
+        try:
+            execution_result = self.__function_table.evaluate(
+                code,
+                context = context,
+                tracing = True,
+            )
 
-                    if index < 0:
-                        continue
+            await print_separator(0)
 
-                    start = index
-                    start_padding = len(left_marker)
+            await aprint("Success (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
 
-                    break
+            return {
+                "execution": execution_result,
+                "generated_code": code,
+                "response_time_in_seconds": elapsed_s,
+                "time_to_first_token_in_milliseconds": time_to_first_token_ms,
+            }
+        except Exception as e:
+            await aprint("Failed (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
+            await aprint(format_exc())
 
-                end = output.find(right_marker, start + start_padding)
-                if end < 0:
-                    end = len(output)
-
-                code = output[start + start_padding:end]
-
-                await aprint(code)
-                await print_separator(0)
-
-                try:
-                    execution_result = self.__function_table.evaluate(
-                        code,
-                        context = context,
-                        tracing = True,
-                    )
-
-                    await print_separator(0)
-
-                    await aprint("Success (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
-
-                    return {
-                        "execution": execution_result,
-                        "generated_code": code,
-                        "response_time_in_seconds": elapsed_s,
-                        "time_to_first_token_in_milliseconds": time_to_first_token_ms,
-                    }
-                except Exception as e:
-                    await aprint("Failed (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
-                    await aprint(format_exc())
-
-                await print_separator(0)
+        await print_separator(0)
 
 ####################################################################################################
 
@@ -490,8 +466,11 @@ def generate_random_number(context, inclusiveStart: 'Integer', exclusiveEnd: 'In
 
     return randint(inclusiveStart, exclusiveEnd)
 
+async def wrapper():
+    return 'Berlin'
+
 def query_llm(context, query: 'String') -> 'String':
-    return ''
+    return context["get_test_case"]().event_loop.run_until_complete(wrapper())
 
 table = FunctionTable(FunctionSignatureFormatter())
 
@@ -713,7 +692,7 @@ DEFAULT_ENDPOINT_URL = "https://api.openai.com/v1/chat/completions"
 DEFAULT_MODEL_NAME = "gpt-4o-mini"
 DEFAULT_MODEL_TEMPERATURE = 0.0
 
-async def main():
+async def main(event_loop):
     intention = intentions[4]
 
     context = {
@@ -727,6 +706,7 @@ async def main():
     )
 
     test_case = TestCase(
+        event_loop,
         table,
         environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
         environ.get("ENDPOINT_KEY", None),
@@ -743,7 +723,7 @@ async def main():
 
 class Encoder(JSONEncoder):
     def default(self, instance):
-        if isinstance(instance, TestCase):
+        if callable(instance):
             return {}
 
         return super().default(instance)
@@ -759,4 +739,9 @@ models = [
     },
 ]
 
-asyncio.run(main())
+try:
+    event_loop = asyncio.new_event_loop()
+    event_loop.create_task(main(event_loop))
+    event_loop.run_forever()
+finally:
+    event_loop.close()
