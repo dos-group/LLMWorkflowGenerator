@@ -2,35 +2,32 @@
 
 ####################################################################################################
 
-from aioconsole import aprint, ainput
-from aiohttp import ClientSession, MultipartReader
-from inspect import getfullargspec
-from typing import Collection,  get_origin, get_args
-from json import loads
 from copy import deepcopy
+from inspect import getfullargspec
+from json import dumps, JSONEncoder, loads
 from os import environ, listdir, path, get_terminal_size
 from random import randint, seed
 from traceback import format_exc
-from json import dumps, JSONEncoder
-import asyncio
+from typing import Collection,  get_origin, get_args
+import requests
 import subprocess
 import time
 
 ####################################################################################################
 
-async def request_chat_completions(url, model, role, key, prompt, temperature):
+def request_chat_completions(url, model, role, key, prompt, temperature):
     request_headers = {}
 
-    if key is not None and len(key) > 0:
+    if key:
         request_headers["Authorization"] = "Bearer " + key
 
-    request_body={
+    request_body = {
         "model": model,
         "messages": [],
         "stream": True,
     }
 
-    if role is not None:
+    if role:
         request_body["messages"].append(
             {"role": "system", "content": "You are a Python 3 code generator."}
         )
@@ -44,43 +41,40 @@ async def request_chat_completions(url, model, role, key, prompt, temperature):
 
     start_time = time.time_ns()
     time_to_first_token_ns = None
+    output = ""
 
-    async with ClientSession() as session:
-        async with session.post(url, headers=request_headers, json=request_body) as response:
-            if response.status != 200:
-                raise "Status is not 200"
+    response = requests.post(url, headers=request_headers, json=request_body, stream=True)
 
-            output = ""
+    if response.status_code != 200:
+        raise Exception("Status is not 200")
 
-            async for chunk in response.content:
-                if chunk:
-                    string = chunk.decode("utf-8").lstrip("data: ").strip()
-                    if len(string) == 0:
-                        continue
+    for chunk in response.iter_lines():
+        if chunk:
+            string = chunk.decode("utf-8").lstrip("data: ").strip()
+            if not string:
+                continue
 
-                    if time_to_first_token_ns is None:
-                        time_to_first_token_ns = time.time_ns() - start_time
+            if time_to_first_token_ns is None:
+                time_to_first_token_ns = time.time_ns() - start_time
 
-                    if string == "[DONE]":
-                        break
+            if string == "[DONE]":
+                break
 
-                    data = loads(string, strict=False)
+            data = loads(string, strict=False)
 
-                    if 'content' in data["choices"][0]["delta"]:
-                        output = output + data["choices"][0]["delta"]["content"]
-                    else:
-                        break
-                else:
-                    break
+            if 'content' in data["choices"][0]["delta"]:
+                output += data["choices"][0]["delta"]["content"]
+            else:
+                break
 
-            elapsed_s = (time.time_ns() - start_time) / (10 ** 9)
-            time_to_first_token_ms = time_to_first_token_ns / (10 ** 6)
+    elapsed_s = (time.time_ns() - start_time) / (10 ** 9)
+    time_to_first_token_ms = time_to_first_token_ns / (10 ** 6) if time_to_first_token_ns else None
 
-            return {
-                "output": output,
-                "elapsed_s": elapsed_s,
-                "time_to_first_token_ms": time_to_first_token_ms,
-            }
+    return {
+        "output": output,
+        "elapsed_s": elapsed_s,
+        "time_to_first_token_ms": time_to_first_token_ms,
+    }
 
 ####################################################################################################
 
@@ -258,7 +252,7 @@ Afterwards, execute the previously written Python 3 function. Do not use other f
 
 ####################################################################################################
 
-async def print_separator(newlines = 0):
+def print_separator(newlines = 0):
     columns = 80
     try:
         columns = get_terminal_size().columns
@@ -267,12 +261,11 @@ async def print_separator(newlines = 0):
     finally:
         pass
 
-    await aprint(str(columns * "#") + str(newlines * "\n"))
+    print(str(columns * "#") + str(newlines * "\n"))
 
 class TestCase:
     def __init__(
             self,
-            event_loop,
             function_table,
             url,
             key,
@@ -281,7 +274,6 @@ class TestCase:
             prompt,
             correct_code = None,
     ):
-        self.__event_loop = event_loop
         self.__function_table = function_table
         self.__url = url
         self.__key = key
@@ -289,10 +281,6 @@ class TestCase:
         self.__temperature = temperature
         self.__prompt = prompt
         self.__correct_code = correct_code
-
-    @property
-    def event_loop(self):
-        return self.__event_loop
 
     @property
     def url(self):
@@ -310,15 +298,15 @@ class TestCase:
     def temperature(self):
         return self.__temperature
 
-    async def run(self, context = None):
+    def run(self, context = None):
         if context is None:
             context = {}
 
         context["get_test_case"] = lambda: self
 
-        await print_separator(0)
-        await aprint(table.format_prompt_specification())
-        await print_separator(0)
+        print_separator(0)
+        print(table.format_prompt_specification())
+        print_separator(0)
 
         request_headers = {}
 
@@ -340,10 +328,10 @@ class TestCase:
         start_time = time.time_ns()
         time_to_first_token_ns = None
 
-        await aprint(self.__url, self.__model, self.__temperature, self.__prompt)
-        await print_separator(0)
+        print(self.__url, self.__model, self.__temperature, self.__prompt)
+        print_separator(0)
 
-        result = await request_chat_completions(
+        result = request_chat_completions(
             self.__url,
             self.__model,
             'You are a Python 3 code generator.',
@@ -356,8 +344,8 @@ class TestCase:
         elapsed_s = result["elapsed_s"]
         time_to_first_token_ms = result["time_to_first_token_ms"]
 
-        await aprint(output)
-        await print_separator(0)
+        print(output)
+        print_separator(0)
 
         marker = "```"
 
@@ -386,8 +374,8 @@ class TestCase:
 
         code = output[start + start_padding:end]
 
-        await aprint(code)
-        await print_separator(0)
+        print(code)
+        print_separator(0)
 
         try:
             execution_result = self.__function_table.evaluate(
@@ -396,9 +384,9 @@ class TestCase:
                 tracing = True,
             )
 
-            await print_separator(0)
+            print_separator(0)
 
-            await aprint("Success (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
+            print("Success (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
 
             return {
                 "execution": execution_result,
@@ -407,10 +395,10 @@ class TestCase:
                 "time_to_first_token_in_milliseconds": time_to_first_token_ms,
             }
         except Exception as e:
-            await aprint("Failed (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
-            await aprint(format_exc())
+            print("Failed (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
+            print(format_exc())
 
-        await print_separator(0)
+        print_separator(0)
 
 ####################################################################################################
 
@@ -466,11 +454,20 @@ def generate_random_number(context, inclusiveStart: 'Integer', exclusiveEnd: 'In
 
     return randint(inclusiveStart, exclusiveEnd)
 
-async def wrapper():
+def wrapper():
     return 'Berlin'
 
 def query_llm(context, query: 'String') -> 'String':
-    return context["get_test_case"]().event_loop.run_until_complete(wrapper())
+    test_case = context["get_test_case"]()
+
+    return request_chat_completions(
+        test_case.url,
+        test_case.model,
+        None,
+        test_case.key,
+        query,
+        test_case.temperature,
+    )
 
 table = FunctionTable(FunctionSignatureFormatter())
 
@@ -688,45 +685,45 @@ main()
 
 ####################################################################################################
 
-DEFAULT_ENDPOINT_URL = "https://api.openai.com/v1/chat/completions"
-DEFAULT_MODEL_NAME = "gpt-4o-mini"
-DEFAULT_MODEL_TEMPERATURE = 0.0
-
-async def main(event_loop):
-    intention = intentions[4]
-
-    context = {
-        "seed": 2 ** 64 - 1,
-    }
-
-    correct_execution_result = table.evaluate(
-        intention["correct_code"],
-        context = context,
-        tracing = True,
-    )
-
-    test_case = TestCase(
-        event_loop,
-        table,
-        environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
-        environ.get("ENDPOINT_KEY", None),
-        environ.get("MODEL_NAME", DEFAULT_MODEL_NAME),
-        environ.get("MODEL_TEMPERATURE", DEFAULT_MODEL_TEMPERATURE),
-        intention["prompt"],
-        intention["correct_code"],
-    )
-
-    llm_result = await test_case.run(context)
-
-    print(dumps(correct_execution_result, cls = Encoder, indent=4))
-    print(dumps(llm_result["execution"], cls = Encoder, indent = 4))
-
 class Encoder(JSONEncoder):
     def default(self, instance):
         if callable(instance):
             return {}
 
         return super().default(instance)
+
+####################################################################################################
+
+DEFAULT_ENDPOINT_URL = "https://api.openai.com/v1/chat/completions"
+DEFAULT_MODEL_NAME = "gpt-4o-mini"
+DEFAULT_MODEL_TEMPERATURE = 0.0
+
+intention = intentions[4]
+
+context = {
+    "seed": 2 ** 64 - 1,
+}
+
+correct_execution_result = table.evaluate(
+    intention["correct_code"],
+    context = context,
+    tracing = True,
+)
+
+test_case = TestCase(
+    table,
+    environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
+    environ.get("ENDPOINT_KEY", None),
+    environ.get("MODEL_NAME", DEFAULT_MODEL_NAME),
+    environ.get("MODEL_TEMPERATURE", DEFAULT_MODEL_TEMPERATURE),
+    intention["prompt"],
+    intention["correct_code"],
+)
+
+llm_result = test_case.run(context)
+
+print(dumps(correct_execution_result, cls = Encoder, indent=4))
+print(dumps(llm_result["execution"], cls = Encoder, indent = 4))
 
 ####################################################################################################
 
@@ -738,10 +735,3 @@ models = [
         "model_temperature": 0,
     },
 ]
-
-try:
-    event_loop = asyncio.new_event_loop()
-    event_loop.create_task(main(event_loop))
-    event_loop.run_forever()
-finally:
-    event_loop.close()
