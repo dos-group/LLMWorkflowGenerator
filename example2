@@ -19,3 +19,52 @@ function query_llm(query: String): String
 ################################################################################
 https://api.openai.com/v1/chat/completions gpt-4o 0.0 Which is the largest city in germany?
 ################################################################################
+To address the instruction "Which is the largest city in Germany?" using the provided application programming interface, we can utilize the `query_llm` function to query a language model for the answer. Here's how you can implement this:
+
+```python
+def find_largest_city_in_germany():
+    # Query the language model to find out the largest city in Germany
+    question = "Which is the largest city in Germany?"
+    answer = query_llm(question)
+    
+    # Print the answer on the screen
+    print_screen(answer)
+
+# Execute the function
+find_largest_city_in_germany()
+```
+
+This function uses the `query_llm` function to get the answer to the question and then prints the result using the `print_screen` function.
+################################################################################
+
+def find_largest_city_in_germany():
+    # Query the language model to find out the largest city in Germany
+    question = "Which is the largest city in Germany?"
+    answer = query_llm(question)
+    
+    # Print the answer on the screen
+    print_screen(answer)
+
+# Execute the function
+find_largest_city_in_germany()
+
+################################################################################
+Failed (total 2.645820677s, ttft 948.9375ms)
+Traceback (most recent call last):
+  File "main.py", line 393, in run
+    execution_result = self.__function_table.evaluate(
+  File "main.py", line 206, in evaluate
+    exec(
+  File "<string>", line 11, in <module>
+  File "<string>", line 5, in find_largest_city_in_germany
+  File "main.py", line 231, in callable
+    return_value = function.callable(result["context"], *args, **kwargs)
+  File "main.py", line 473, in query_llm
+    return context["get_test_case"]().event_loop.run_until_complete(wrapper())
+  File "/usr/local/lib/python3.8/asyncio/base_events.py", line 592, in run_until_complete
+    self._check_running()
+  File "/usr/local/lib/python3.8/asyncio/base_events.py", line 552, in _check_running
+    raise RuntimeError('This event loop is already running')
+RuntimeError: This event loop is already running
+
+################################################################################
