@@ -5,7 +5,7 @@
 from copy import deepcopy
 from inspect import getfullargspec
 from json import dumps, JSONEncoder, loads
-from os import environ, listdir, path, get_terminal_size
+from os import environ, listdir, path, get_terminal_size, makedirs
 from random import randint, seed
 from traceback import format_exc
 from typing import Collection,  get_origin, get_args
@@ -42,11 +42,12 @@ def request_chat_completions(url, model, role, key, prompt, temperature):
     start_time = time.time_ns()
     time_to_first_token_ns = None
     output = ""
+    response = None
 
     response = requests.post(url, headers=request_headers, json=request_body, stream=True)
 
     if response.status_code != 200:
-        raise Exception("Status is not 200")
+        raise Exception("Status is not 200 ({})".format(response.status_code))
 
     for chunk in response.iter_lines():
         if chunk:
@@ -272,7 +273,6 @@ class TestCase:
             model,
             temperature,
             prompt,
-            correct_code = None,
     ):
         self.__function_table = function_table
         self.__url = url
@@ -280,7 +280,6 @@ class TestCase:
         self.__model = model
         self.__temperature = temperature
         self.__prompt = prompt
-        self.__correct_code = correct_code
 
     @property
     def url(self):
@@ -389,7 +388,9 @@ class TestCase:
             print("Success (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
 
             return {
+                "status": "success",
                 "execution": execution_result,
+                "output": output,
                 "generated_code": code,
                 "response_time_in_seconds": elapsed_s,
                 "time_to_first_token_in_milliseconds": time_to_first_token_ms,
@@ -398,11 +399,20 @@ class TestCase:
             print("Failed (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
             print(format_exc())
 
+            return {
+                "status": "error",
+                "execution": e,
+                "output": output,
+                "generated_code": code,
+                "response_time_in_seconds": elapsed_s,
+                "time_to_first_token_in_milliseconds": time_to_first_token_ms,
+            }
+
         print_separator(0)
 
 ####################################################################################################
 
-def find_file(expression: 'String') -> 'String|null':
+def find_file(context, expression: 'String') -> 'String|null':
     directory = "files"
 
     for file_name in listdir(directory):
@@ -467,7 +477,25 @@ def query_llm(context, query: 'String') -> 'String':
         test_case.key,
         query,
         test_case.temperature,
-    )
+    )["output"]
+
+def http_get_request(
+    url: 'String',
+    headers: 'Dictionary<String, String>',
+) -> 'String':
+    return requests.request('GET', url, headers = headers).text
+
+def shell(
+    context,
+    command: 'String',
+) -> 'String':
+    return_value = ""
+    if "shell_return_value" in context:
+        return_value = context["shell_return_value"]
+
+    Function.stub('shell', command)()
+
+    return return_value
 
 table = FunctionTable(FunctionSignatureFormatter())
 
@@ -486,14 +514,6 @@ table.register(
         "contact_id": "Integer",
     },
     return_type = "String|null",
-)
-table.register(
-    Function.stub("play_voice"),
-    name = "play_voice",
-    argument_types = {
-        "text": "String",
-    },
-    return_type = None,
 )
 table.register(
     Function.stub("ask_question", "Hello"),
@@ -521,15 +541,13 @@ table.register(
     return_type = "Integer",
 )
 table.register(
-    Function.stub("shell", "Document 0\nDocument 1\nDocument 2"),
-    name = "shell",
-    argument_types = {
-        "command": "String",
-    },
-    return_type = "String",
-)
-table.register(
-    Function.stub("find_files", [0, 1, 2, 3, 4]),
+    Function.stub("find_files", [
+        "File0",
+        "File1",
+        "File2",
+        "File3",
+        "File4",
+    ]),
     name = "find_files",
     argument_types = {
         "expression": "String",
@@ -537,12 +555,13 @@ table.register(
     return_type = "Collection<String>"
 )
 table.register(
-    Function.stub("print_screen"),
-    name = "print_screen",
+    Function.stub("print"),
+    name = "print",
     argument_types = {
         "text": "String",
     },
 )
+table.register(shell)
 table.register(sleep)
 table.register(find_all_audio_files)
 table.register(generate_random_number)
@@ -550,6 +569,19 @@ table.register(play_audio_file)
 table.register(find_file)
 table.register(stop_audio_player)
 table.register(query_llm)
+table.register(http_get_request)
+
+####################################################################################################
+
+class Encoder(JSONEncoder):
+    def default(self, instance):
+        if isinstance(instance, Exception):
+            return str(instance)
+
+        if callable(instance):
+            return {}
+
+        return super().default(instance)
 
 ####################################################################################################
 
@@ -631,17 +663,13 @@ main()
     },
     ################################################################################################
     {
-        "prompt": "Please tell me all files in my home directory",
-        "context" : {},
+        "prompt": "Please tell me all files in the current directory",
+        "context" : {
+            "shell_return_value": "File0\nFile1\nFile2"
+        },
         "correct_code": """
 def main():
-    files = list(
-        map(
-            lambda x: x.split('/')[-1]
-            shell("ls ~"),
-        )
-    )
-
+    files = shell("ls .")
     print_screen(files)
 
 main()
@@ -671,8 +699,10 @@ main()
     },
     ################################################################################################
     {
-        "prompt": "Please install nginx on the machine with the address 127.0.0.1:2222",
-        "context" : {},
+        "prompt": "Please install nginx on the machine with the address 127.0.0.1:2222 running Debian GNU/Linux",
+        "context" : {
+            "shell_return_value": "",
+        },
         "correct_code": """
 def main():
     shell("ssh 127.0.0.1:2222 'sudo apt-get update && sudo apt-get install nginx -y'")
@@ -685,45 +715,57 @@ main()
 
 ####################################################################################################
 
-class Encoder(JSONEncoder):
-    def default(self, instance):
-        if callable(instance):
-            return {}
-
-        return super().default(instance)
-
-####################################################################################################
-
 DEFAULT_ENDPOINT_URL = "https://api.openai.com/v1/chat/completions"
 DEFAULT_MODEL_NAME = "gpt-4o-mini"
 DEFAULT_MODEL_TEMPERATURE = 0.0
-
-intention = intentions[4]
 
 context = {
     "seed": 2 ** 64 - 1,
 }
 
-correct_execution_result = table.evaluate(
-    intention["correct_code"],
-    context = context,
-    tracing = True,
-)
+if False:
+    correct_execution_result = table.evaluate(
+        intention["correct_code"],
+        context = context,
+        tracing = True,
+    )
 
-test_case = TestCase(
-    table,
-    environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
-    environ.get("ENDPOINT_KEY", None),
-    environ.get("MODEL_NAME", DEFAULT_MODEL_NAME),
-    environ.get("MODEL_TEMPERATURE", DEFAULT_MODEL_TEMPERATURE),
-    intention["prompt"],
-    intention["correct_code"],
-)
+for index, intention in enumerate(intentions):
+#    if index != 4:
+#        continue
 
-llm_result = test_case.run(context)
+    test_case = TestCase(
+        table,
+        environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
+        environ.get("ENDPOINT_KEY", None),
+        environ.get("MODEL_NAME", DEFAULT_MODEL_NAME),
+        environ.get("MODEL_TEMPERATURE", DEFAULT_MODEL_TEMPERATURE),
+        intention["prompt"],
+    )
 
-print(dumps(correct_execution_result, cls = Encoder, indent=4))
-print(dumps(llm_result["execution"], cls = Encoder, indent = 4))
+    llm_result = test_case.run(context)
+
+    output_path = "outputs/{}".format(test_case.model)
+    output_file = "{}/{}.json".format(output_path, index)
+    code_file = "{}/{}.py".format(output_path, index)
+
+    if not path.exists(output_path):
+        makedirs(output_path)
+
+    with open(output_file, "w") as f:
+        f.write(
+            dumps(
+                {
+                    **llm_result,
+                    "prompt": intention["prompt"],
+                },
+                cls = Encoder,
+                indent = 4
+            )
+        )
+
+    with open(code_file, "w") as f:
+        f.write(llm_result["generated_code"])
 
 ####################################################################################################
 
