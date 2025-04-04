@@ -1,0 +1,27 @@
+
+def play_random_song_for_5_seconds():
+    # Find all audio files
+    audio_files = find_all_audio_files()
+    
+    # Check if there are any audio files available
+    if not audio_files:
+        print("No audio files found.")
+        return
+    
+    # Generate a random index to select a random audio file
+    random_index = generate_random_number(0, len(audio_files))
+    
+    # Get the random audio file path
+    random_audio_file = audio_files[random_index]
+    
+    # Play the selected audio file
+    play_audio_file(random_audio_file)
+    
+    # Sleep for 5 seconds
+    sleep(5)
+    
+    # Stop the audio player
+    stop_audio_player()
+
+# Execute the function
+play_random_song_for_5_seconds()

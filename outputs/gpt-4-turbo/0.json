@@ -1,0 +1,15 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": []
+    },
+    "output": "Here's the Python function that uses the provided application programming interface to execute the instruction \"Please sleep for 5 seconds\":\n\n```python\ndef sleep_for_five_seconds():\n    sleep(5)\n```\n\nNow, let's execute the function:\n\n```python\nsleep_for_five_seconds()\n```",
+    "generated_code": "\ndef sleep_for_five_seconds():\n    sleep(5)\n",
+    "response_time_in_seconds": 2.852129531,
+    "time_to_first_token_in_milliseconds": 759.99526,
+    "prompt": "Please sleep for 5 seconds"
+}
