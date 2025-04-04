@@ -1,0 +1,80 @@
+* Fastest Response Time
+** With gpts:
+9/9: gpt-4o
+** Without gpts:
+2/9: falcon-3-10b-instruct
+1/9: phi-4
+6/9: qwen-2dot5-14b-instruct
+
+* Slowest Response Time
+** With gpts:
+4/9 gpt-4.5-preview-2025-02-27
+1/9 falcon-3-10b-instruct
+2/9 gpt-4-turbo
+2/9 phi-4
+** Without gpts:
+2/9: falcon-3-10b-instruct
+7/9: phi-4
+
+* Fastest Time to First Token
+** With gpts:
+9/9: falcon-3-10b-instruct
+** Without gpts:
+9/9: falcon-3-10b-instruct
+
+* Slowest Time to First Token
+** With gpts:
+6/9: gpt-4.5-preview-2025-02-27,
+3/9: gpt-4-turbo,
+** Without gpts:
+6/9: phi-4
+3/9: qwen-2dot5-14b-instruct
+
+* falcon-3-10b-instruct
+** Total
+0, 1, 2, 3, 4, 5, 7: success
+6, 8: failed
+** Notes
+- Failed 6 only due to missing marker
+- Only LLM which solved intention 7
+* phi-4
+** Total
+0, 1, 2, 3, 4, 5, 6: success
+7, 8: failed
+** Notes
+- Failed extraction
+* qwen-2dot5-14b-instruct
+** Total
+0, 2, 3, 4, 5, 6, 8: success
+1, 7: failed
+
+* gpt-4o
+** Total
+0, 1, 2, 3, 4, 5, 6, 8: success
+7: failed
+* gpt-4o-mini
+** Total
+0, 1, 2, 3, 4, 5, 6, 8: success
+7: failed
+* gpt-4-turbo
+** Total
+1, 2, 3, 4, 5, 6, 8: success
+0, 7: failed
+* gpt-4.5-preview-2025-02-27
+** Total
+0, 1, 2, 3, 4, 5, 6, 8: success
+7: failed
+
+
+* Overall
+|----------------------------+---------------------------+----------------------------------|
+| Model                      | Average Response Time (s) | Average Time to First Token (ms) |
+|----------------------------+---------------------------+----------------------------------|
+| falcon-3-10b-instruct      |                   6.38988 |                          353.372 |
+| phi-4                      |                   7.15928 |                          398.444 |
+| qwen-2dot5-14b-instruct    |                   3.41833 |                          390.601 |
+| gpt-4o                     |                   1.74678 |                          539.906 |
+| gpt-4o-mini                |                   3.98753 |                          498.293 |
+| gpt-4-turbo                |                     6.526 |                          883.148 |
+| gpt-4.5-preview-2025-02-27 |                   7.24012 |                          900.146 |
+|----------------------------+---------------------------+----------------------------------|
