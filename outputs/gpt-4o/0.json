@@ -24,9 +24,9 @@
             }
         ]
     },
-    "output": "```python\ndef sleep_for_five_seconds():\n    sleep(5)\n\n# Execute the function\nsleep_for_five_seconds()\n```",
-    "generated_code": "\ndef sleep_for_five_seconds():\n    sleep(5)\n\n# Execute the function\nsleep_for_five_seconds()\n",
-    "response_time_in_seconds": 1.073204792,
-    "time_to_first_token_in_milliseconds": 643.248125,
+    "output": "```python\ndef sleep_for_five_seconds():\n    sleep(5)\n\n# Call the function\nsleep_for_five_seconds()\n```",
+    "generated_code": "\ndef sleep_for_five_seconds():\n    sleep(5)\n\n# Call the function\nsleep_for_five_seconds()\n",
+    "response_time_in_seconds": 0.855597917,
+    "time_to_first_token_in_milliseconds": 609.636302,
     "prompt": "Please sleep for 5 seconds"
 }

@@ -1,0 +1,32 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "sleep",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    5
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef execute_sleep_instruction():\n    sleep(5)\n\nexecute_sleep_instruction()\n```",
+    "generated_code": "\ndef execute_sleep_instruction():\n    sleep(5)\n\nexecute_sleep_instruction()\n",
+    "response_time_in_seconds": 1.226320677,
+    "time_to_first_token_in_milliseconds": 359.977604,
+    "prompt": "Please sleep for 5 seconds"
+}

@@ -1,5 +1,5 @@
 
-def largest_city_in_germany():
+def find_largest_city_in_germany():
     # Use the query_llm function to ask the question
     question = "Which is the largest city in Germany?"
     answer = query_llm(question)
@@ -7,5 +7,5 @@ def largest_city_in_germany():
     # Print the answer
     print(answer)
 
-# Execute the function
-largest_city_in_germany()
+# Call the function
+find_largest_city_in_germany()

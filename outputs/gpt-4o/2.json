@@ -38,9 +38,9 @@
             }
         ]
     },
-    "output": "```python\ndef tell_current_temperature():\n    temperature = get_temperature()\n    print(f\"The current temperature is {temperature} degrees.\")\n\n# Execute the function\ntell_current_temperature()\n```",
-    "generated_code": "\ndef tell_current_temperature():\n    temperature = get_temperature()\n    print(f\"The current temperature is {temperature} degrees.\")\n\n# Execute the function\ntell_current_temperature()\n",
-    "response_time_in_seconds": 0.903111198,
-    "time_to_first_token_in_milliseconds": 506.047969,
+    "output": "```python\ndef report_current_temperature():\n    # Get the current temperature\n    temperature = get_temperature()\n    # Print the current temperature\n    print(f\"The current temperature is {temperature} degrees.\")\n\n# Call the function\nreport_current_temperature()\n```",
+    "generated_code": "\ndef report_current_temperature():\n    # Get the current temperature\n    temperature = get_temperature()\n    # Print the current temperature\n    print(f\"The current temperature is {temperature} degrees.\")\n\n# Call the function\nreport_current_temperature()\n",
+    "response_time_in_seconds": 1.452993073,
+    "time_to_first_token_in_milliseconds": 444.470104,
     "prompt": "Please tell me the current temperature"
 }

@@ -1,0 +1,46 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "get_temperature",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [],
+                "keyword_arguments": {},
+                "return_value": 37,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "The current temperature is 37 degrees."
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef respond_to_temperature_query():\n    temperature = get_temperature()\n    response = f\"The current temperature is {temperature} degrees.\"\n    print(response)\n\nrespond_to_temperature_query()\n```",
+    "generated_code": "\ndef respond_to_temperature_query():\n    temperature = get_temperature()\n    response = f\"The current temperature is {temperature} degrees.\"\n    print(response)\n\nrespond_to_temperature_query()\n",
+    "response_time_in_seconds": 2.236555677,
+    "time_to_first_token_in_milliseconds": 359.732292,
+    "prompt": "Please tell me the current temperature"
+}

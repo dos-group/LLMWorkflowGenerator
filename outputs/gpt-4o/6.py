@@ -19,10 +19,10 @@ def send_car_title_to_insurance():
         return
 
     # Send the car title to the insurance company
-    subject = "Car Title"
-    text = "Please find attached the car title."
+    subject = "Car Title Document"
+    text = "Please find attached the car title document."
     send_email(email, subject, text, [car_title_file])
     print("Car title sent to the insurance company.")
 
-# Execute the function
+# Call the function
 send_car_title_to_insurance()

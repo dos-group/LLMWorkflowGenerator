@@ -1,11 +1,9 @@
 
-def list_all_files_in_directory():
-    # Using the API function to find all files with a wildcard expression that matches all files
+def list_all_files_in_current_directory():
+    # Using the find_files function with a wildcard to match all files in the current directory
     all_files = find_files("*")
-    
-    # Printing each file found
-    for file in all_files:
-        print(file)
+    return all_files
 
-# Execute the function
-list_all_files_in_directory()
+# Call the function and print the result
+files_in_directory = list_all_files_in_current_directory()
+print("Files in the current directory:", files_in_directory)

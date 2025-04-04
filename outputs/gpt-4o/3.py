@@ -21,5 +21,5 @@ def play_random_song_for_5_seconds():
     # Stop the audio player
     stop_audio_player()
 
-# Execute the function
+# Call the function
 play_random_song_for_5_seconds()

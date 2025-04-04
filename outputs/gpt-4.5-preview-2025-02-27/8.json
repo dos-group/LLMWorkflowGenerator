@@ -40,9 +40,9 @@
             }
         ]
     },
-    "output": "```python\ndef install_nginx_on_remote():\n    command = \"ssh -p 2222 127.0.0.1 'sudo apt-get update && sudo apt-get install -y nginx'\"\n    result = shell(command)\n    print(result)\n\ninstall_nginx_on_remote()\n```",
-    "generated_code": "\ndef install_nginx_on_remote():\n    command = \"ssh -p 2222 127.0.0.1 'sudo apt-get update && sudo apt-get install -y nginx'\"\n    result = shell(command)\n    print(result)\n\ninstall_nginx_on_remote()\n",
-    "response_time_in_seconds": 4.946116719,
-    "time_to_first_token_in_milliseconds": 705.382864,
+    "output": "```python\ndef install_nginx_on_remote_machine():\n    command = \"ssh -p 2222 127.0.0.1 'sudo apt-get update && sudo apt-get install -y nginx'\"\n    result = shell(command)\n    print(result)\n\ninstall_nginx_on_remote_machine()\n```",
+    "generated_code": "\ndef install_nginx_on_remote_machine():\n    command = \"ssh -p 2222 127.0.0.1 'sudo apt-get update && sudo apt-get install -y nginx'\"\n    result = shell(command)\n    print(result)\n\ninstall_nginx_on_remote_machine()\n",
+    "response_time_in_seconds": 5.084214011,
+    "time_to_first_token_in_milliseconds": 726.329584,
     "prompt": "Please install nginx on the machine with the address 127.0.0.1:2222 running Debian GNU/Linux"
 }

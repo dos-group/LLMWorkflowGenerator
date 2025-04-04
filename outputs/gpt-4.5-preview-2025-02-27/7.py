@@ -1,17 +1,12 @@
 
-def summarize_wikipedia_article():
-    url = "https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)"
+def summarize_wikipedia_article(url: str):
     headers = {"Accept": "text/html"}
-    html_content = http_get_request(url, headers)
+    article_html = http_get_request(url, headers)
     
-    # Prepare a query for the LLM to summarize the article
-    query = f"Summarize the following Wikipedia article content:\n\n{html_content}"
-    
-    # Get the summary from the LLM
+    query = f"Summarize the following Wikipedia article content:\n\n{article_html}"
     summary = query_llm(query)
     
-    # Print the summary
     print(summary)
 
-# Execute the function
-summarize_wikipedia_article()
+# Call the function with the provided URL
+summarize_wikipedia_article("https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)")

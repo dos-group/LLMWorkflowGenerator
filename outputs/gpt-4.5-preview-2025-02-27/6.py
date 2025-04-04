@@ -6,7 +6,7 @@ def send_car_title_to_insurance():
         print("Insurance company contact not found.")
         return
     
-    # Find the email address for the insurance company
+    # Get the email address of the insurance company
     insurance_email = find_contact_email(insurance_contact_id)
     if insurance_email is None:
         print("Insurance company email not found.")
@@ -24,5 +24,5 @@ def send_car_title_to_insurance():
     send_email(insurance_email, subject, text, [car_title_file])
     print("Car title sent successfully.")
 
-# Execute the function
+# Call the function
 send_car_title_to_insurance()

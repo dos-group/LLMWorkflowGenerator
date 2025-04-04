@@ -5,11 +5,130 @@
             "seed": 18446744073709551615,
             "get_test_case": {}
         },
-        "trace": []
+        "trace": [
+            {
+                "name": "find_files",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    ""
+                ],
+                "keyword_arguments": {},
+                "return_value": [
+                    "File0",
+                    "File1",
+                    "File2",
+                    "File3",
+                    "File4"
+                ],
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "Files in the current directory:"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File0"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File1"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File2"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File3"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File4"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
     },
-    "output": "Given the instruction \"Please tell me all files in the current directory\", we can use the `find_files` function to achieve this. Here's how you can write the function in Python 3 using the provided API:\n\n```python\ndef list_files_in_directory():\n    # Use the find_files function to get all files in the current directory\n    files = find_files(\"*\")\n    # Print each file found\n    for file in files:\n        print(file)\n```\n\nNow, let's execute the function:\n\n```python\nlist_files_in_directory()\n```\n\nThis function will list all files in the current directory by using the `find_files` function with the expression `\"*\"`, which typically matches all files in the current directory. The `print` function is then used to output each file path found.",
-    "generated_code": "\ndef list_files_in_directory():\n    # Use the find_files function to get all files in the current directory\n    files = find_files(\"*\")\n    # Print each file found\n    for file in files:\n        print(file)\n",
-    "response_time_in_seconds": 7.537662188,
-    "time_to_first_token_in_milliseconds": 381.657292,
+    "output": "```python\ndef list_files():\n    files = find_files(\"\")\n    print(\"Files in the current directory:\")\n    for file in files:\n        print(file)\n\nlist_files()\n```",
+    "generated_code": "\ndef list_files():\n    files = find_files(\"\")\n    print(\"Files in the current directory:\")\n    for file in files:\n        print(file)\n\nlist_files()\n",
+    "response_time_in_seconds": 1.971901562,
+    "time_to_first_token_in_milliseconds": 382.678854,
     "prompt": "Please tell me all files in the current directory"
 }

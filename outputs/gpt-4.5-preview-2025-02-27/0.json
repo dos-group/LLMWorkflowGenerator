@@ -26,7 +26,7 @@
     },
     "output": "```python\ndef sleep_for_five_seconds():\n    sleep(5)\n\nsleep_for_five_seconds()\n```",
     "generated_code": "\ndef sleep_for_five_seconds():\n    sleep(5)\n\nsleep_for_five_seconds()\n",
-    "response_time_in_seconds": 3.423286666,
-    "time_to_first_token_in_milliseconds": 999.546094,
+    "response_time_in_seconds": 3.03546677,
+    "time_to_first_token_in_milliseconds": 1077.005885,
     "prompt": "Please sleep for 5 seconds"
 }

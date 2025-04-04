@@ -8,5 +8,5 @@ def list_all_files_in_current_directory():
     else:
         print("No files found in the current directory.")
 
-# Execute the function
+# Call the function
 list_all_files_in_current_directory()

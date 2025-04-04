@@ -1,10 +1,9 @@
 
 def get_random_number():
     # Generate a random number between 1 and 100
-    random_number = generate_random_number(1, 101)
-    # Return the random number as a string
-    return str(random_number)
+    random_number = generate_random_number(1, 101)  # 101 is exclusive
+    return random_number
 
-# Execute the function and print the result
-result = get_random_number()
-print(result)
+# Execute the function
+random_number = get_random_number()
+print(random_number)

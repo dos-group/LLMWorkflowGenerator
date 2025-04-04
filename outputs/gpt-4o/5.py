@@ -1,11 +1,10 @@
 
 def list_all_files_in_current_directory():
+    # Use the find_files function with a wildcard expression to find all files
     files = find_files("*")
-    if files:
-        for file in files:
-            print(file)
-    else:
-        print("No files found in the current directory.")
+    # Print each file name
+    for file in files:
+        print(file)
 
-# Execute the function
+# Call the function
 list_all_files_in_current_directory()

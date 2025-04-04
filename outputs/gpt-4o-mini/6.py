@@ -1,31 +1,32 @@
 
 def send_car_title_to_insurance():
     # Step 1: Find the car title file
-    car_title_files = find_files("car title")
-    if not car_title_files:
-        print("No car title file found.")
+    car_title_file = find_file("car title")
+    
+    if car_title_file is None:
+        print("Car title file not found.")
         return
     
-    car_title_file = car_title_files[0]  # Assuming we take the first found file
-
-    # Step 2: Find the insurance company's contact ID and email
+    # Step 2: Find the contact ID for the insurance company
     insurance_contact_id = find_contact_id("insurance company")
+    
     if insurance_contact_id is None:
-        print("Insurance company not found.")
+        print("Insurance company contact not found.")
         return
     
+    # Step 3: Retrieve the email address of the insurance company
     insurance_email = find_contact_email(insurance_contact_id)
+    
     if insurance_email is None:
         print("Insurance company email not found.")
         return
-
-    # Step 3: Send the email with the car title attached
+    
+    # Step 4: Send the email with the car title attached
     subject = "Car Title Submission"
     text = "Please find attached my car title."
     attachment_paths = [car_title_file]
     
     send_email(insurance_email, subject, text, attachment_paths)
-    print("Car title sent to insurance company.")
 
 # Execute the function
 send_car_title_to_insurance()

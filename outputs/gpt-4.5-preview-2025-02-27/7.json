@@ -1,9 +1,9 @@
 {
     "status": "error",
     "execution": "Status is not 200 (429)",
-    "output": "```python\ndef summarize_wikipedia_article():\n    url = \"https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)\"\n    headers = {\"Accept\": \"text/html\"}\n    html_content = http_get_request(url, headers)\n    \n    # Prepare a query for the LLM to summarize the article\n    query = f\"Summarize the following Wikipedia article content:\\n\\n{html_content}\"\n    \n    # Get the summary from the LLM\n    summary = query_llm(query)\n    \n    # Print the summary\n    print(summary)\n\n# Execute the function\nsummarize_wikipedia_article()\n```",
-    "generated_code": "\ndef summarize_wikipedia_article():\n    url = \"https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)\"\n    headers = {\"Accept\": \"text/html\"}\n    html_content = http_get_request(url, headers)\n    \n    # Prepare a query for the LLM to summarize the article\n    query = f\"Summarize the following Wikipedia article content:\\n\\n{html_content}\"\n    \n    # Get the summary from the LLM\n    summary = query_llm(query)\n    \n    # Print the summary\n    print(summary)\n\n# Execute the function\nsummarize_wikipedia_article()\n",
-    "response_time_in_seconds": 16.295660469,
-    "time_to_first_token_in_milliseconds": 1093.996458,
+    "output": "```python\ndef summarize_wikipedia_article(url: str):\n    headers = {\"Accept\": \"text/html\"}\n    article_html = http_get_request(url, headers)\n    \n    query = f\"Summarize the following Wikipedia article content:\\n\\n{article_html}\"\n    summary = query_llm(query)\n    \n    print(summary)\n\n# Call the function with the provided URL\nsummarize_wikipedia_article(\"https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)\")\n```",
+    "generated_code": "\ndef summarize_wikipedia_article(url: str):\n    headers = {\"Accept\": \"text/html\"}\n    article_html = http_get_request(url, headers)\n    \n    query = f\"Summarize the following Wikipedia article content:\\n\\n{article_html}\"\n    summary = query_llm(query)\n    \n    print(summary)\n\n# Call the function with the provided URL\nsummarize_wikipedia_article(\"https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)\")\n",
+    "response_time_in_seconds": 8.025357188,
+    "time_to_first_token_in_milliseconds": 815.109844,
     "prompt": "Please summarize the wikipedia article https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)"
 }

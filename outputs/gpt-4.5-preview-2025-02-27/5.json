@@ -126,9 +126,9 @@
             }
         ]
     },
-    "output": "```python\ndef list_all_files_in_current_directory():\n    files = find_files(\"*\")\n    if files:\n        print(\"Files in the current directory:\")\n        for file in files:\n            print(file)\n    else:\n        print(\"No files found in the current directory.\")\n\n# Execute the function\nlist_all_files_in_current_directory()\n```",
-    "generated_code": "\ndef list_all_files_in_current_directory():\n    files = find_files(\"*\")\n    if files:\n        print(\"Files in the current directory:\")\n        for file in files:\n            print(file)\n    else:\n        print(\"No files found in the current directory.\")\n\n# Execute the function\nlist_all_files_in_current_directory()\n",
-    "response_time_in_seconds": 5.575456198,
-    "time_to_first_token_in_milliseconds": 889.609271,
+    "output": "```python\ndef list_all_files_in_current_directory():\n    files = find_files(\"*\")\n    if files:\n        print(\"Files in the current directory:\")\n        for file in files:\n            print(file)\n    else:\n        print(\"No files found in the current directory.\")\n\n# Call the function\nlist_all_files_in_current_directory()\n```",
+    "generated_code": "\ndef list_all_files_in_current_directory():\n    files = find_files(\"*\")\n    if files:\n        print(\"Files in the current directory:\")\n        for file in files:\n            print(file)\n    else:\n        print(\"No files found in the current directory.\")\n\n# Call the function\nlist_all_files_in_current_directory()\n",
+    "response_time_in_seconds": 5.495807656,
+    "time_to_first_token_in_milliseconds": 859.48901,
     "prompt": "Please tell me all files in the current directory"
 }

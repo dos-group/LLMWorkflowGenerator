@@ -1,14 +1,9 @@
 
-def summarize_wikipedia_article(url):
-    # Query the language model with the URL to get a summary
-    summary = query_llm(f"Summarize the content of the following URL: {url}")
+def summarize_wiki_article(url: str) -> str:
+    response = http_get_request(url, {})
+    query = f"Please summarize the following article:\n{response}"
+    summary = query_llm(query)
     return summary
 
-# URL of the Wikipedia article
-url = "https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)"
-
-# Summarize the article
-summary = summarize_wikipedia_article(url)
-
-# Print the summary
-print(summary)
+# Call the function and print the result
+print(summarize_wiki_article("https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)"))

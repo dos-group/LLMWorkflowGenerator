@@ -27,9 +27,9 @@ def request_chat_completions(url, model, role, key, prompt, temperature):
         "stream": True,
     }
 
-    if role:
+    if role is not None:
         request_body["messages"].append(
-            {"role": "system", "content": "You are a Python 3 code generator."}
+            {"role": "system", "content": role}
         )
 
     request_body["messages"].append(
@@ -248,7 +248,8 @@ You have the following application programming interface:
 Write a Python 3 function, which uses the provided application programming interface for the instruction
 "{message}"
 
-Afterwards, execute the previously written Python 3 function. Do not use other functions, only those provided by the given application programming interface.
+Afterwards, call the previously written Python 3 function. Do not use other functions,
+only those provided by the given application programming interface. Use one code block only.
 """.format(message=message, functions_prompt=table.format_prompt_specification())
 
 ####################################################################################################
@@ -367,9 +368,29 @@ class TestCase:
 
             break
 
+        if start is None:
+            return {
+                "status": "failed",
+                "execution": {},
+                "output": output,
+                "generated_code": "",
+                "response_time_in_seconds": elapsed_s,
+                "time_to_first_token_in_milliseconds": time_to_first_token_ms,
+            }
+
         end = output.find(right_marker, start + start_padding)
         if end < 0:
             end = len(output)
+
+        if end is None:
+            return {
+                "status": "failed",
+                "execution": {},
+                "output": output,
+                "generated_code": "",
+                "response_time_in_seconds": elapsed_s,
+                "time_to_first_token_in_milliseconds": time_to_first_token_ms,
+            }
 
         code = output[start + start_padding:end]
 
@@ -463,9 +484,6 @@ def generate_random_number(context, inclusiveStart: 'Integer', exclusiveEnd: 'In
         seed(context['seed'])
 
     return randint(inclusiveStart, exclusiveEnd)
-
-def wrapper():
-    return 'Berlin'
 
 def query_llm(context, query: 'String') -> 'String':
     test_case = context["get_test_case"]()
@@ -766,14 +784,3 @@ for index, intention in enumerate(intentions):
 
     with open(code_file, "w") as f:
         f.write(llm_result["generated_code"])
-
-####################################################################################################
-
-models = [
-    {
-        "endpoint_url": "https://api.openai.com/v1/chat/completions",
-        "endpoint_key": None,
-        "model_name": "gpt-4o-mini",
-        "model_temperature": 0,
-    },
-]

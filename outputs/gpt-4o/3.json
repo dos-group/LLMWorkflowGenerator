@@ -16,8 +16,8 @@
                 "keyword_arguments": {},
                 "return_value": [
                     "Track2.mp3",
-                    "Track3.mp3",
                     "Track4.mp3",
+                    "Track3.mp3",
                     "Track0.mp3",
                     "Track1.mp3"
                 ],
@@ -91,9 +91,9 @@
             }
         ]
     },
-    "output": "```python\ndef play_random_song_for_5_seconds():\n    # Find all audio files\n    audio_files = find_all_audio_files()\n    \n    # Check if there are any audio files\n    if not audio_files:\n        print(\"No audio files found.\")\n        return\n    \n    # Generate a random index to select a random audio file\n    random_index = generate_random_number(0, len(audio_files))\n    random_song = audio_files[random_index]\n    \n    # Play the selected random audio file\n    play_audio_file(random_song)\n    \n    # Sleep for 5 seconds\n    sleep(5)\n    \n    # Stop the audio player\n    stop_audio_player()\n\n# Execute the function\nplay_random_song_for_5_seconds()\n```",
-    "generated_code": "\ndef play_random_song_for_5_seconds():\n    # Find all audio files\n    audio_files = find_all_audio_files()\n    \n    # Check if there are any audio files\n    if not audio_files:\n        print(\"No audio files found.\")\n        return\n    \n    # Generate a random index to select a random audio file\n    random_index = generate_random_number(0, len(audio_files))\n    random_song = audio_files[random_index]\n    \n    # Play the selected random audio file\n    play_audio_file(random_song)\n    \n    # Sleep for 5 seconds\n    sleep(5)\n    \n    # Stop the audio player\n    stop_audio_player()\n\n# Execute the function\nplay_random_song_for_5_seconds()\n",
-    "response_time_in_seconds": 2.04892776,
-    "time_to_first_token_in_milliseconds": 536.355781,
+    "output": "```python\ndef play_random_song_for_5_seconds():\n    # Find all audio files\n    audio_files = find_all_audio_files()\n    \n    # Check if there are any audio files\n    if not audio_files:\n        print(\"No audio files found.\")\n        return\n    \n    # Generate a random index to select a random audio file\n    random_index = generate_random_number(0, len(audio_files))\n    random_song = audio_files[random_index]\n    \n    # Play the selected random audio file\n    play_audio_file(random_song)\n    \n    # Sleep for 5 seconds\n    sleep(5)\n    \n    # Stop the audio player\n    stop_audio_player()\n\n# Call the function\nplay_random_song_for_5_seconds()\n```",
+    "generated_code": "\ndef play_random_song_for_5_seconds():\n    # Find all audio files\n    audio_files = find_all_audio_files()\n    \n    # Check if there are any audio files\n    if not audio_files:\n        print(\"No audio files found.\")\n        return\n    \n    # Generate a random index to select a random audio file\n    random_index = generate_random_number(0, len(audio_files))\n    random_song = audio_files[random_index]\n    \n    # Play the selected random audio file\n    play_audio_file(random_song)\n    \n    # Sleep for 5 seconds\n    sleep(5)\n    \n    # Stop the audio player\n    stop_audio_player()\n\n# Call the function\nplay_random_song_for_5_seconds()\n",
+    "response_time_in_seconds": 1.901530729,
+    "time_to_first_token_in_milliseconds": 476.554844,
     "prompt": "Play a random song in my list for 5 seconds"
 }

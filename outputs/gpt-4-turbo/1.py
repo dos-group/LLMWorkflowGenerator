@@ -5,5 +5,5 @@ def tell_random_number():
     # Print the random number
     print(f"The random number between 1 and 100 is: {random_number}")
 
-# Execute the function
+# Call the function
 tell_random_number()
