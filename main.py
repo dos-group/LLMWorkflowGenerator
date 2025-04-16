@@ -9,6 +9,7 @@ from os import environ, listdir, path, get_terminal_size, makedirs
 from random import randint, seed
 from traceback import format_exc
 from typing import Collection,  get_origin, get_args
+from sys import stdin
 import requests
 import subprocess
 import time
@@ -455,7 +456,6 @@ def find_all_audio_files() -> Collection['String']:
     ]
 
 def play_audio_file(file_path: 'String') -> None:
-    return
     result = subprocess.run(
         ["termux-media-player", "play", path.join("files", file_path)],
         text=True,
@@ -466,7 +466,6 @@ def play_audio_file(file_path: 'String') -> None:
     print(result.stdout)
 
 def stop_audio_player() -> None:
-    return
     result = subprocess.run(
         ["termux-media-player", "stop"],
         text=True,
@@ -747,6 +746,22 @@ if False:
         context = context,
         tracing = True,
     )
+
+test_case = TestCase(
+    table,
+    environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
+    environ.get("ENDPOINT_KEY", None),
+    environ.get("MODEL_NAME", DEFAULT_MODEL_NAME),
+    environ.get("MODEL_TEMPERATURE", DEFAULT_MODEL_TEMPERATURE),
+    stdin.read(),
+)
+
+llm_result = test_case.run(context)
+
+print(llm_result)
+
+exit(0)
+
 
 for index, intention in enumerate(intentions):
 #    if index != 4:
