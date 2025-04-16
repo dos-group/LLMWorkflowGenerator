@@ -737,7 +737,7 @@ DEFAULT_MODEL_NAME = "gpt-4o-mini"
 DEFAULT_MODEL_TEMPERATURE = 0.0
 
 context = {
-    #"seed": 2 ** 64 - 1,
+    "seed": 2 ** 64 - 1,
 }
 
 if False:
