@@ -1,0 +1,49 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "generate_random_number",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    1,
+                    101
+                ],
+                "keyword_arguments": {},
+                "return_value": 3,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "Your random number is: 3"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef tell_random_number():\n    number = generate_random_number(1, 101)  # exclusiveEnd is 101 to include 100\n    print(f\"Your random number is: {number}\")\n\n# Call the function\ntell_random_number()\n```",
+    "generated_code": "\ndef tell_random_number():\n    number = generate_random_number(1, 101)  # exclusiveEnd is 101 to include 100\n    print(f\"Your random number is: {number}\")\n\n# Call the function\ntell_random_number()\n",
+    "response_time_in_seconds": 6.264463802,
+    "time_to_first_token_in_milliseconds": 783.776927,
+    "prompt": "Please tell me a random number between 1 and 100"
+}

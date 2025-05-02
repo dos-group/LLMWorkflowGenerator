@@ -1,0 +1,9 @@
+{
+    "status": "error",
+    "execution": "Status is not 200 (400)",
+    "output": "```python\ndef summarize_wiki_article(url: str) -> str:\n    response = http_get_request(url, {})\n    query = f\"Please summarize the following article:\\n{response}\"\n    summary = query_llm(query)\n    return summary\n\n# Call the function and print the result\nprint(summarize_wiki_article(\"https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)\"))\n```",
+    "generated_code": "\ndef summarize_wiki_article(url: str) -> str:\n    response = http_get_request(url, {})\n    query = f\"Please summarize the following article:\\n{response}\"\n    summary = query_llm(query)\n    return summary\n\n# Call the function and print the result\nprint(summarize_wiki_article(\"https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)\"))\n",
+    "response_time_in_seconds": 4.096569844,
+    "time_to_first_token_in_milliseconds": 405.784271,
+    "prompt": "Please summarize the wikipedia article https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)"
+}

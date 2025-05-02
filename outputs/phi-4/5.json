@@ -1,0 +1,118 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "find_files",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "."
+                ],
+                "keyword_arguments": {},
+                "return_value": [
+                    "File0",
+                    "File1",
+                    "File2",
+                    "File3",
+                    "File4"
+                ],
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File0"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File1"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File2"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File3"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File4"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef list_files_in_current_directory():\n    # Use the find_files function with an expression that matches all files in the current directory\n    files = find_files(\".\")\n\n    # Print the list of files\n    if files is not None:\n        for file in files:\n            print(file)\n    else:\n        print(\"No files found or an error occurred.\")\n\n# Call the function\nlist_files_in_current_directory()\n```\n\nThis function uses the `find_files` API with the expression `\".\"` to list all files in the current directory and then prints each file.",
+    "generated_code": "\ndef list_files_in_current_directory():\n    # Use the find_files function with an expression that matches all files in the current directory\n    files = find_files(\".\")\n\n    # Print the list of files\n    if files is not None:\n        for file in files:\n            print(file)\n    else:\n        print(\"No files found or an error occurred.\")\n\n# Call the function\nlist_files_in_current_directory()\n",
+    "response_time_in_seconds": 5.692187708,
+    "time_to_first_token_in_milliseconds": 378.985729,
+    "prompt": "Please tell me all files in the current directory"
+}

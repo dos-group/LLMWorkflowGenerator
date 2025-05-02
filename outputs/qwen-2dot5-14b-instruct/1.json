@@ -1,0 +1,65 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "generate_random_number",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    1,
+                    101
+                ],
+                "keyword_arguments": {},
+                "return_value": 3,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "ask_question",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "The random number between 1 and 100 is: 3"
+                ],
+                "keyword_arguments": {},
+                "return_value": "Hello",
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "Hello"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef random_number_response():\n    random_number = generate_random_number(1, 101)\n    return ask_question(f\"The random number between 1 and 100 is: {random_number}\")\n\nprint(random_number_response())\n```",
+    "generated_code": "\ndef random_number_response():\n    random_number = generate_random_number(1, 101)\n    return ask_question(f\"The random number between 1 and 100 is: {random_number}\")\n\nprint(random_number_response())\n",
+    "response_time_in_seconds": 2.627149375,
+    "time_to_first_token_in_milliseconds": 402.147084,
+    "prompt": "Please tell me a random number between 1 and 100"
+}

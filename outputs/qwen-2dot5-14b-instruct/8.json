@@ -1,0 +1,32 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "shell",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "ssh -o StrictHostKeyChecking=no root@127.0.0.1 -p 2222 'apt-get update && apt-get install -y nginx'"
+                ],
+                "keyword_arguments": {},
+                "return_value": "",
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef install_nginx_on_machine():\n    ssh_command = \"ssh -o StrictHostKeyChecking=no root@127.0.0.1 -p 2222 'apt-get update && apt-get install -y nginx'\"\n    shell(ssh_command)\n\ninstall_nginx_on_machine()\n```",
+    "generated_code": "\ndef install_nginx_on_machine():\n    ssh_command = \"ssh -o StrictHostKeyChecking=no root@127.0.0.1 -p 2222 'apt-get update && apt-get install -y nginx'\"\n    shell(ssh_command)\n\ninstall_nginx_on_machine()\n",
+    "response_time_in_seconds": 3.293810678,
+    "time_to_first_token_in_milliseconds": 386.991771,
+    "prompt": "Please install nginx on the machine with the address 127.0.0.1:2222 running Debian GNU/Linux"
+}

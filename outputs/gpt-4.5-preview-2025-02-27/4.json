@@ -1,0 +1,48 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "query_llm",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "Which is the largest city in Germany?"
+                ],
+                "keyword_arguments": {},
+                "return_value": "Berlin is the largest city in Germany.",
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "Berlin is the largest city in Germany."
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef find_largest_city_in_germany():\n    question = \"Which is the largest city in Germany?\"\n    answer = query_llm(question)\n    print(answer)\n\n# Call the function\nfind_largest_city_in_germany()\n```",
+    "generated_code": "\ndef find_largest_city_in_germany():\n    question = \"Which is the largest city in Germany?\"\n    answer = query_llm(question)\n    print(answer)\n\n# Call the function\nfind_largest_city_in_germany()\n",
+    "response_time_in_seconds": 5.890060365,
+    "time_to_first_token_in_milliseconds": 884.490469,
+    "prompt": "Which is the largest city in germany?"
+}
