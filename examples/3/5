@@ -1,0 +1,61 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please play the song beat it by michael jackson
+
+####################################################################################################
+
+
+
+```python
+# Start by finding the file ID for the song "Beat It" by Michael Jackson
+file_id = find_file_id("Beat It Michael Jackson")
+
+# Check if the file ID was found
+if file_id is not None:
+    # Play the audio file using the found file ID
+    play_audio_file(file_id)
+else:
+    # If the file ID is not found, print an error message
+    print_screen("Could not find the song 'Beat It' by Michael Jackson.")
+```
+
+####################################################################################################
+
+
+# Start by finding the file ID for the song "Beat It" by Michael Jackson
+file_id = find_file_id("Beat It Michael Jackson")
+
+# Check if the file ID was found
+if file_id is not None:
+    # Play the audio file using the found file ID
+    play_audio_file(file_id)
+else:
+    # If the file ID is not found, print an error message
+    print_screen("Could not find the song 'Beat It' by Michael Jackson.")
+
+
+####################################################################################################
+
+Execute "find_file_id" and arguments "Beat It Michael Jackson"
+Execute "play_audio_file" and arguments "1"
+
+####################################################################################################
+
+Success (total 2.492450834s, ttft 488.552657ms)
+
+####################################################################################################
+

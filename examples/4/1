@@ -1,0 +1,67 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please tell me all files in my home directory
+
+####################################################################################################
+
+
+
+```python
+# Assuming a home directory path is defined
+home_directory_path = "/home/user/"  # Replace with the actual home directory
+
+# Function to list all files in the home directory
+def list_files_in_home_directory():
+    # Use shell command to get files
+    command = f"ls {home_directory_path}"
+    files = shell(command)
+    print_screen(files)
+
+# Execute the function
+list_files_in_home_directory()
+```
+
+####################################################################################################
+
+
+# Assuming a home directory path is defined
+home_directory_path = "/home/user/"  # Replace with the actual home directory
+
+# Function to list all files in the home directory
+def list_files_in_home_directory():
+    # Use shell command to get files
+    command = f"ls {home_directory_path}"
+    files = shell(command)
+    print_screen(files)
+
+# Execute the function
+list_files_in_home_directory()
+
+
+####################################################################################################
+
+Failed (total 1.564652864s, ttft 403.770625ms)
+Traceback (most recent call last):
+  File "main.py", line 240, in request
+    exec(
+  File "<string>", line 13, in <module>
+  File "<string>", line 8, in list_files_in_home_directory
+NameError: name 'home_directory_path' is not defined
+
+
+####################################################################################################
+

@@ -1,0 +1,51 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please tell me the current temperature
+
+####################################################################################################
+
+
+
+```python
+# Get the current temperature
+current_temperature = get_temperature()
+
+# Print the current temperature in a message
+print_screen(f"The current temperature is {current_temperature} degrees.")
+```
+
+####################################################################################################
+
+
+# Get the current temperature
+current_temperature = get_temperature()
+
+# Print the current temperature in a message
+print_screen(f"The current temperature is {current_temperature} degrees.")
+
+
+####################################################################################################
+
+Execute "get_temperature" and arguments 
+Execute "print_screen" and arguments "The current temperature is 37 degrees."
+
+####################################################################################################
+
+Success (total 1.337681302s, ttft 515.455885ms)
+
+####################################################################################################
+

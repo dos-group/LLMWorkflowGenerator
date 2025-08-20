@@ -1,0 +1,47 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please tell me all files in my home directory
+
+####################################################################################################
+
+
+
+```python
+home_directory = shell("ls ~")
+print_screen(home_directory)
+```
+
+####################################################################################################
+
+
+home_directory = shell("ls ~")
+print_screen(home_directory)
+
+
+####################################################################################################
+
+Execute "shell" and arguments "ls ~"
+Execute "print_screen" and arguments "Document 0
+Document 1
+Document 2"
+
+####################################################################################################
+
+Success (total 0.704733021s, ttft 455.687813ms)
+
+####################################################################################################
+

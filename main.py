@@ -2,241 +2,159 @@
 
 ####################################################################################################
 
-from copy import deepcopy
-from inspect import getfullargspec
-from json import dumps, JSONEncoder, loads
-from os import environ, listdir, path, get_terminal_size, makedirs
-from random import randint, seed
+from aioconsole import aprint, ainput
+from aiohttp import ClientSession, MultipartReader
+from asyncio import run
+from json import loads
+from os import environ
+from time import time_ns
 from traceback import format_exc
-from typing import Collection,  get_origin, get_args
-from sys import stdin, argv
-import requests
-import subprocess
-import time
 
 ####################################################################################################
 
-def request_chat_completions(url, model, role, key, prompt, temperature):
-    request_headers = {}
+class Argument:
+    def __init__(self, name, type):
+        self.name = name
+        self.type = type
 
-    if key:
-        request_headers["Authorization"] = "Bearer " + key
-
-    request_body = {
-        "model": model,
-        "messages": [],
-        "stream": True,
-    }
-
-    if role is not None:
-        request_body["messages"].append(
-            {"role": "system", "content": role}
-        )
-
-    request_body["messages"].append(
-        {"role": "user", "content": prompt},
-    )
-
-    if temperature is not None:
-        request_body["temperature"] = float(temperature)
-
-    start_time = time.time_ns()
-    time_to_first_token_ns = None
-    output = ""
-    response = None
-
-    response = requests.post(url, headers=request_headers, json=request_body, stream=True)
-
-    if response.status_code != 200:
-        raise Exception("Status is not 200 ({}) {}".format(response.status_code, response.content))
-
-    for chunk in response.iter_lines():
-        if chunk:
-            string = chunk.decode("utf-8").lstrip("data: ").strip()
-            if not string:
-                continue
-
-            if time_to_first_token_ns is None:
-                time_to_first_token_ns = time.time_ns() - start_time
-
-            if string == "[DONE]":
-                break
-
-            data = loads(string, strict=False)
-
-            if 'content' in data["choices"][0]["delta"]:
-                output += data["choices"][0]["delta"]["content"]
-            else:
-                break
-
-    elapsed_s = (time.time_ns() - start_time) / (10 ** 9)
-    time_to_first_token_ms = time_to_first_token_ns / (10 ** 6) if time_to_first_token_ns else None
-
-    return {
-        "output": output,
-        "elapsed_s": elapsed_s,
-        "time_to_first_token_ms": time_to_first_token_ms,
-    }
+    def format(self):
+        return self.name + ": " + self.type
 
 ####################################################################################################
 
 class Function:
-    def __init__(self, callable, name = None, argument_types = None, return_type = None):
-        self.__callable_specification = getfullargspec(callable)
-        self.__callable = callable
-        self.__name = name or callable.__name__
+    def __init__(self, name, arguments, return_type, callback):
+        self.name = name
+        self.arguments = arguments
+        self.return_type = return_type
+        self.callback = callback
 
-        self.__argument_types = argument_types
-        if argument_types is None:
-            context_filtered_argument_keys = [*self.__callable_specification.args]
-            if self.has_context():
-                del context_filtered_argument_keys[0]
+    def format_arguments(self):
+        return ", ".join(map(lambda argument: argument.format(), self.arguments))
 
-            self.__argument_types = {
-                argument_key:self.__callable_specification.annotations[argument_key] for argument_key in context_filtered_argument_keys
-            }
+    def format_return_type(self):
+        if self.return_type is None or len(self.return_type) == 0:
+            return ": void"
 
-        self.__return_type = return_type
-        if "return" in self.__callable_specification.annotations:
-            self.__return_type = self.__callable_specification.annotations["return"]
+        return ": " + self.return_type
 
-    @property
-    def name(self):
-        return self.__name
-
-    @property
-    def callable(self):
-        return self.__callable
-
-    @property
-    def argument_types(self):
-        return self.__argument_types
-
-    def has_context(self):
-        return len(self.__callable_specification.args) > 0 and self.__callable_specification.args[0] == "context"
-
-    @property
-    def return_type(self):
-        return self.__return_type
-
-    def stub(name, return_value = None):
-        def wrapper(*args):
-            print('Execute "{}" and arguments {}'.format(name, ', '.join(map(lambda argument: '"' + str(argument) + '"', args))))
-
-            return return_value
-
-        return wrapper
+    def format(self):
+        return "function " + self.name + "(" + self.format_arguments() + ")" + self.format_return_type()
 
 ####################################################################################################
 
-class FunctionSignatureFormatter:
-    def format_type(self, type):
-        if type is None:
-            return "void"
+def stub_function(name, return_value = None):
+    def wrapper(*args):
+        print('Execute "{}" and arguments {}'.format(name, ', '.join(map(lambda argument: '"' + str(argument) + '"', args))))
 
-        if isinstance(type, str):
-            return type
+        return return_value
 
-        if get_origin(type) is None:
-            return str(type)
-
-        if get_origin(type).__name__ == 'Collection':
-            types = ", ".join(
-                map(
-                    lambda forward_argument: forward_argument.__forward_arg__, get_args(type)
-                )
-            )
-
-            return "Collection<" + types + ">"
-
-        return str(type)
-
-    def format(self, function):
-        specification = getfullargspec(function.callable)
-
-        arguments = ", ".join(
-            map(
-                lambda argument_type_key: argument_type_key + ": " + self.format_type(function.argument_types[argument_type_key]),
-                function.argument_types,
-            )
-        )
-
-        return_type = self.format_type(function.return_type)
-
-        return "function " + function.name + "(" + arguments + "): " + return_type
+    return wrapper
 
 ####################################################################################################
 
-class FunctionTable:
-    def __init__(self, signature_formatter):
-        self.__signature_formatter = signature_formatter
-        self.__functions = {}
+FUNCTIONS = [
+    Function(
+        "find_file_id",
+        [
+            Argument("expression", "String"),
+        ],
+        "Integer|null",
+        stub_function("find_file_id", 1),
+    ),
+    Function(
+        "find_contact_id",
+        [
+            Argument("expression", "String"),
+        ],
+        "Integer|null",
+        stub_function("find_contact_id", 1),
+    ),
+    Function(
+        "find_contact_email",
+        [
+            Argument("contact_id", "Integer"),
+        ],
+        "String|null",
+        stub_function("find_contact_email", "john.doe@example.com"),
+    ),
+    Function(
+        "play_voice",
+        [
+            Argument("text", "String"),
+        ],
+        None,
+        stub_function("play_voice"),
+    ),
+    Function(
+        "ask_question",
+        [
+            Argument("question", "String"),
+        ],
+        "String",
+        stub_function("ask_question", "Hello"),
+    ),
+    Function(
+        "play_audio_file",
+        [
+            Argument("file", "File"),
+        ],
+        None,
+        stub_function("play_audio_file"),
+    ),
+    Function(
+        "send_email",
+        [
+            Argument("email", "String"),
+            Argument("subject", "String"),
+            Argument("text", "String"),
+            Argument("attachments", "Collection<Integer>"),
+        ],
+        None,
+        stub_function("send_email"),
+    ),
+    Function(
+        "receive_email",
+        [
+            Argument("email", "String"),
+            Argument("subject", "String"),
+            Argument("text", "String"),
+            Argument("attachments", "Collection<Integer>"),
+        ],
+        None,
+        stub_function("receive_email"),
+    ),
+    Function(
+        "print_screen",
+        [
+            Argument("text", "String"),
+        ],
+        None,
+        stub_function("print_screen"),
+    ),
+    Function(
+        "get_temperature",
+        [
+        ],
+        "Integer",
+        stub_function("get_temperature", 37),
+    ),
+    Function(
+        "shell",
+        [
+            Argument("command", "String"),
+        ],
+        "String",
+        stub_function("shell", "Document 0\nDocument 1\nDocument 2"),
+    ),
+]
 
-    def register(self, callable, **kwargs):
-        function = Function(callable, **kwargs)
-
-        if function.name in self.__functions:
-            raise Exception("Function name is already in use")
-
-        self.__functions[function.name] = function
-
-    def format_prompt_specification(self):
-        return "\n".join(
-            map(
-                self.__signature_formatter.format,
-                self.__functions.values(),
-            )
-        )
-
-    def evaluate(self, code, context = None, tracing = False):
-        if context is None:
-            context = {}
-
-        result = {
-            "context": context,
-        }
-
-        if tracing is True:
-            result["trace"] = []
-
-        exec(
-            code,
-            {
-                function.name:self.__create_callable(function, result) for function in self.__functions.values()
-            },
-            {},
-        )
-
-        return result
-
-    def __create_callable(self, function, result):
-        def callable(*args, **kwargs):
-            trace = {}
-
-            if "trace" in result:
-                trace = {
-                    "name": function.name,
-                    "before_context": deepcopy(result["context"]),
-                    "arguments": deepcopy(args),
-                    "keyword_arguments": deepcopy(kwargs),
-                }
-
-            return_value = None
-
-            if function.has_context():
-                return_value = function.callable(result["context"], *args, **kwargs)
-            else:
-                return_value = function.callable(*args, **kwargs)
-
-            if "trace" in result:
-                trace["return_value"] = deepcopy(return_value)
-                trace["after_context"] = deepcopy(result["context"])
-
-                result["trace"].append(trace)
-
-            return return_value
-
-        return callable
+functions_prompt = "\n".join(
+    map(
+        lambda function: function.format(),
+        FUNCTIONS,
+    )
+)
 
 ####################################################################################################
 
@@ -246,467 +164,110 @@ You have the following application programming interface:
 
 {functions_prompt}
 
-Write a Python 3 function, which uses the provided application programming interface for the instruction
+Write Python 3 code only, which uses the application programming interface for the instruction
 "{message}"
-
-Afterwards, call the previously written Python 3 function. Do not use other functions,
-only those provided by the given application programming interface. Use one code block only.
-""".format(message=message, functions_prompt=table.format_prompt_specification())
+""".format(message=message, functions_prompt=functions_prompt)
 
 ####################################################################################################
 
-def print_separator(newlines = 0):
-    columns = 80
-    try:
-        columns = get_terminal_size().columns
-    except:
-        pass
-    finally:
-        pass
-
-    print(str(columns * "#") + str(newlines * "\n"))
-
-class TestCase:
-    def __init__(
-            self,
-            function_table,
-            url,
-            key,
-            model,
-            temperature,
-            prompt,
-    ):
-        self.__function_table = function_table
-        self.__url = url
-        self.__key = key
-        self.__model = model
-        self.__temperature = temperature
-        self.__prompt = prompt
-
-    @property
-    def url(self):
-        return self.__url
-
-    @property
-    def key(self):
-        return self.__key
-
-    @property
-    def model(self):
-        return self.__model
-
-    @property
-    def temperature(self):
-        return self.__temperature
-
-    def run(self, context = None):
-        if context is None:
-            context = {}
-
-        context["get_test_case"] = lambda: self
-
-        print_separator(0)
-        print(table.format_prompt_specification())
-        print_separator(0)
-
-        request_headers = {}
-
-        if self.__key is not None and len(self.__key) > 0:
-            request_headers["Authorization"] = "Bearer " + self.__key
-
-        request_body={
-            "model": self.__model,
-            "messages": [
-                {'role': 'system', 'content': 'You are a Python 3 code generator.'},
-                {"role": "user", "content": format_content(self.__prompt)},
-            ],
-            "stream": True,
-        }
-
-        if self.__temperature is not None:
-            request_body["temperature"] = float(self.__temperature)
-
-        start_time = time.time_ns()
-        time_to_first_token_ns = None
-
-        print(self.__url, self.__model, self.__temperature, self.__prompt)
-        print_separator(0)
-
-        result = request_chat_completions(
-            self.__url,
-            self.__model,
-            'You are a Python 3 code generator.',
-            self.__key,
-            format_content(self.__prompt),
-            self.__temperature,
-        )
-
-        output = result["output"]
-        elapsed_s = result["elapsed_s"]
-        time_to_first_token_ms = result["time_to_first_token_ms"]
-
-        print(output)
-        print_separator(0)
-
-        marker = "```"
-
-        left_markers = [marker + "python3", marker + "python", marker]
-        right_marker = marker
-
-        output = output.strip("\n\r ")
-
-        start = None
-        start_padding = None
-
-        for left_marker in left_markers:
-            index = output.find(left_marker)
-
-            if index < 0:
-                continue
-
-            start = index
-            start_padding = len(left_marker)
-
-            break
-
-        if start is None:
-            return {
-                "status": "failed",
-                "execution": {},
-                "output": output,
-                "generated_code": "",
-                "response_time_in_seconds": elapsed_s,
-                "time_to_first_token_in_milliseconds": time_to_first_token_ms,
-            }
-
-        end = output.find(right_marker, start + start_padding)
-        if end < 0:
-            end = len(output)
-
-        if end is None:
-            return {
-                "status": "failed",
-                "execution": {},
-                "output": output,
-                "generated_code": "",
-                "response_time_in_seconds": elapsed_s,
-                "time_to_first_token_in_milliseconds": time_to_first_token_ms,
-            }
-
-        code = output[start + start_padding:end]
-
-        print(code)
-        print_separator(0)
-
-        try:
-            execution_result = self.__function_table.evaluate(
-                code,
-                context = context,
-                tracing = True,
-            )
-
-            print_separator(0)
-
-            print("Success (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
-
-            return {
-                "status": "success",
-                "execution": execution_result,
-                "output": output,
-                "generated_code": code,
-                "response_time_in_seconds": elapsed_s,
-                "time_to_first_token_in_milliseconds": time_to_first_token_ms,
-            }
-        except Exception as e:
-            print("Failed (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
-            print(format_exc())
-
-            return {
-                "status": "error",
-                "execution": e,
-                "output": output,
-                "generated_code": code,
-                "response_time_in_seconds": elapsed_s,
-                "time_to_first_token_in_milliseconds": time_to_first_token_ms,
-            }
-
-        print_separator(0)
-
-####################################################################################################
-
-def find_file(context, expression: 'String') -> 'String|null':
-    directory = "files"
-
-    for file_name in listdir(directory):
-        if not path.isfile(path.join(directory, file_name)):
-            continue
-
-        if expression not in file_name:
-            continue
-
-        return file_name
-
-    return None
-
-def find_all_audio_files() -> Collection['String']:
-    directory = "files"
-
-    return [
-        f for f in listdir(directory) if path.isfile(path.join(directory, f))
-    ]
-
-def play_audio_file(file_path: 'String') -> None:
-    result = subprocess.run(
-        ["termux-media-player", "play", path.join("files", file_path)],
-        text=True,
-        check=True,
-        capture_output=True,
-    )
-
-    print(result.stdout)
-
-def stop_audio_player() -> None:
-    result = subprocess.run(
-        ["termux-media-player", "stop"],
-        text=True,
-        check=True,
-        capture_output=True,
-    )
-
-    print(result.stdout)
-
-def sleep(seconds: 'Integer') -> None:
-    time.sleep(seconds)
-
-def generate_random_number(context, inclusiveStart: 'Integer', exclusiveEnd: 'Integer') -> 'Integer':
-    if 'seed' in context:
-        seed(context['seed'])
-
-    return randint(inclusiveStart, exclusiveEnd)
-
-def query_llm(context, query: 'String') -> 'String':
-    test_case = context["get_test_case"]()
-
-    return request_chat_completions(
-        test_case.url,
-        test_case.model,
-        None,
-        test_case.key,
-        query,
-        test_case.temperature,
-    )["output"]
-
-def http_get_request(
-    url: 'String',
-    headers: 'Dictionary<String, String>',
-) -> 'String':
-    return requests.request('GET', url, headers = headers).text
-
-def shell(
-    context,
-    command: 'String',
-) -> 'String':
-    return_value = ""
-    if "shell_return_value" in context:
-        return_value = context["shell_return_value"]
-
-    Function.stub('shell', command)()
-
-    return return_value
-
-table = FunctionTable(FunctionSignatureFormatter())
-
-table.register(
-    Function.stub("find_contact_id", 1),
-    name = "find_contact_id",
-    argument_types = {
-        "expression": "String",
-    },
-    return_type = "Integer|null",
-)
-table.register(
-    Function.stub("find_contact_email", "john.doe@example.com"),
-    name = "find_contact_email",
-    argument_types = {
-        "contact_id": "Integer",
-    },
-    return_type = "String|null",
-)
-table.register(
-    Function.stub("ask_question", "Hello"),
-    name = "ask_question",
-    argument_types = {
-        "question": "String",
-    },
-    return_type = "String",
-)
-table.register(
-    Function.stub("send_email"),
-    name = "send_email",
-    argument_types = {
-        "email": "String",
-        "subject": "String",
-        "text": "String",
-        "attachment_paths": "Collection<String>",
-    },
-    return_type = None,
-)
-table.register(
-    Function.stub("get_temperature", 37),
-    name = "get_temperature",
-    argument_types = {},
-    return_type = "Integer",
-)
-table.register(
-    Function.stub("find_files", [
-        "File0",
-        "File1",
-        "File2",
-        "File3",
-        "File4",
-    ]),
-    name = "find_files",
-    argument_types = {
-        "expression": "String",
-    },
-    return_type = "Collection<String>"
-)
-table.register(
-    Function.stub("print"),
-    name = "print",
-    argument_types = {
-        "text": "String",
-    },
-)
-table.register(shell)
-table.register(sleep)
-table.register(find_all_audio_files)
-table.register(generate_random_number)
-table.register(play_audio_file)
-table.register(find_file)
-table.register(stop_audio_player)
-table.register(query_llm)
-table.register(http_get_request)
-
-####################################################################################################
-
-class Encoder(JSONEncoder):
-    def default(self, instance):
-        if isinstance(instance, Exception):
-            return str(instance)
-
-        if callable(instance):
-            return {}
-
-        return super().default(instance)
-
-####################################################################################################
-
-intentions = [
-    {
-        "prompt": "Please sleep for 5 seconds",
-        "context" : {},
-    },
-    ################################################################################################
-    {
-        "prompt": "Please tell me a random number between 1 and 100",
-        "context": {},
-    },
-    ################################################################################################
-    {
-        "prompt": "Please tell me the current temperature",
-        "context": {},
-    },
-    ################################################################################################
-    {
-        "prompt": "Play a random song in my list for 5 seconds",
-        "context" : {},
-    },
-    ################################################################################################
-    {
-        "prompt": "Which is the largest city in germany?",
-        "context": {},
-    },
-    ################################################################################################
-    {
-        "prompt": "Please tell me all files in the current directory",
-        "context" : {
-            "shell_return_value": "File0\nFile1\nFile2"
-        },
-    },
-    ################################################################################################
-    {
-        "prompt": "Please send my car title to my insurance company",
-        "context" : {},
-    },
-    ################################################################################################
-    {
-        "prompt": "Please summarize the wikipedia article https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)",
-        "context" : {},
-    },
-    ################################################################################################
-    {
-        "prompt": "Please install nginx on the machine with the address 127.0.0.1:2222 running Debian GNU/Linux",
-        "context" : {
-            "shell_return_value": "",
-        },
-    },
-]
-
-####################################################################################################
-
-DEFAULT_ENDPOINT_URL = "https://api.openai.com/v1/chat/completions"
-DEFAULT_MODEL_NAME = "gpt-4o-mini"
-DEFAULT_MODEL_TEMPERATURE = 0.0
-
-context = {
-    "seed": 2 ** 64 - 1,
-}
-
-if len(argv) > 2 and argv[1] == 'experiments':
-    for index, intention in enumerate(intentions):
-        test_case = TestCase(
-            table,
-            environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
-            environ.get("ENDPOINT_KEY", None),
-            environ.get("MODEL_NAME", DEFAULT_MODEL_NAME),
-            environ.get("MODEL_TEMPERATURE", DEFAULT_MODEL_TEMPERATURE),
-            intention["prompt"],
-        )
-
-        llm_result = test_case.run(context)
-
-        output_path = "outputs/{}".format(test_case.model)
-        output_file = "{}/{}.json".format(output_path, index)
-        code_file = "{}/{}.py".format(output_path, index)
-
-        if not path.exists(output_path):
-            makedirs(output_path)
-
-        with open(output_file, "w") as f:
-            f.write(
-                dumps(
+async def request(url, key, model, prompt):
+    await aprint("####################################################################################################\n")
+    await aprint(functions_prompt)
+    await aprint("\n####################################################################################################\n")
+
+    request_headers = {
+        "Authorization": "Bearer " + key,
+    }
+
+    request_body={
+        "model": model,
+        "messages": [
+            {'role': 'system', 'content': 'You are a Python 3 code generator.'},
+            {"role": "user", "content": format_content(prompt)},
+        ],
+        "stream": True,
+    }
+
+    start = time_ns()
+    time_to_first_token_ns = None
+
+    await aprint(url, model, prompt)
+    await aprint("\n####################################################################################################\n")
+
+    async with ClientSession() as session:
+        async with session.post(url, headers=request_headers, json=request_body) as response:
+            output = ""
+
+            async for chunk in response.content:
+                if chunk:
+                    string = chunk.decode("utf-8").lstrip("data: ").strip()
+                    if len(string) == 0:
+                        continue
+
+                    if time_to_first_token_ns is None:
+                        time_to_first_token_ns = time_ns() - start
+
+                    if string == "[DONE]":
+                        break
+
+                    data = loads(string, strict=False)
+
+                    if 'content' in data["choices"][0]["delta"]:
+                        output = output + data["choices"][0]["delta"]["content"]
+                    else:
+                        break
+                else:
+                    break
+
+            marker = "```"
+            left_marker = marker + "python"
+            right_marker = "```"
+
+            output = output.strip("\n\r ")
+            code = output[output.index(left_marker) + len(left_marker):output.rindex(right_marker)]
+
+            elapsed_s = (time_ns() - start) / (10 ** 9)
+            time_to_first_token_ms = time_to_first_token_ns / (10 ** 6)
+
+            await aprint("\n")
+            await aprint(output)
+            await aprint("\n####################################################################################################\n")
+
+            await aprint(code)
+            await aprint("\n####################################################################################################\n")
+
+            try:
+                exec(
+                    code,
                     {
-                        **llm_result,
-                        "prompt": intention["prompt"],
+                        function.name:function.callback for function in FUNCTIONS
                     },
-                    cls = Encoder,
-                    indent = 4
+                    {},
                 )
-            )
 
-        with open(code_file, "w") as f:
-            f.write(llm_result["generated_code"])
-else:
-    test_case = TestCase(
-        table,
-        environ.get("ENDPOINT_URL", DEFAULT_ENDPOINT_URL),
-        environ.get("ENDPOINT_KEY", None),
-        environ.get("MODEL_NAME", DEFAULT_MODEL_NAME),
-        environ.get("MODEL_TEMPERATURE", DEFAULT_MODEL_TEMPERATURE),
-        stdin.read(),
-    )
+                await aprint("\n####################################################################################################\n")
 
-    llm_result = test_case.run(context)
+                await aprint("Success (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
+            except Exception as e:
+                await aprint("Failed (total {}s, ttft {}ms)".format(elapsed_s, time_to_first_token_ms))
+                await aprint(format_exc())
 
-    print(llm_result)
+            await aprint("\n####################################################################################################\n")
+
+####################################################################################################
+
+DEFAULT_MODEL = "gpt-4o-mini"
+
+####################################################################################################
+
+async def main():
+    await request(
+        "https://api.openai.com/v1/chat/completions",
+        environ["OPENAI_KEY"],
+        environ.get("MODEL", DEFAULT_MODEL),
+        await ainput(),
+    );
+
+####################################################################################################
+
+run(main())

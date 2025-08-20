@@ -1,0 +1,97 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please send my car title to my insurance company
+
+####################################################################################################
+
+
+
+```python
+# Step 1: Define the important variables
+contact_email_expression = "insurance company"
+email_subject = "Car Title Submission"
+email_text = "Please find attached the car title for my vehicle."
+attachments = []
+
+# Step 2: Find the contact ID for the insurance company
+contact_id = find_contact_id(contact_email_expression)
+
+if contact_id is not None:
+    # Step 3: Get the email address of the contact
+    email_address = find_contact_email(contact_id)
+    
+    if email_address is not None:
+        # Step 4: Find the car title file ID
+        file_expression = "car title"
+        file_id = find_file_id(file_expression)
+        
+        if file_id is not None:
+            attachments.append(file_id)
+        
+        # Step 5: Send the email with car title attachment
+        send_email(email_address, email_subject, email_text, attachments)
+    else:
+        print_screen("Could not find the email address for the insurance company.")
+else:
+    print_screen("Could not find the contact ID for the insurance company.")
+```
+
+####################################################################################################
+
+
+# Step 1: Define the important variables
+contact_email_expression = "insurance company"
+email_subject = "Car Title Submission"
+email_text = "Please find attached the car title for my vehicle."
+attachments = []
+
+# Step 2: Find the contact ID for the insurance company
+contact_id = find_contact_id(contact_email_expression)
+
+if contact_id is not None:
+    # Step 3: Get the email address of the contact
+    email_address = find_contact_email(contact_id)
+    
+    if email_address is not None:
+        # Step 4: Find the car title file ID
+        file_expression = "car title"
+        file_id = find_file_id(file_expression)
+        
+        if file_id is not None:
+            attachments.append(file_id)
+        
+        # Step 5: Send the email with car title attachment
+        send_email(email_address, email_subject, email_text, attachments)
+    else:
+        print_screen("Could not find the email address for the insurance company.")
+else:
+    print_screen("Could not find the contact ID for the insurance company.")
+
+
+####################################################################################################
+
+Execute "find_contact_id" and arguments "insurance company"
+Execute "find_contact_email" and arguments "1"
+Execute "find_file_id" and arguments "car title"
+Execute "send_email" and arguments "john.doe@example.com", "Car Title Submission", "Please find attached the car title for my vehicle.", "[1]"
+
+####################################################################################################
+
+Success (total 4.295413437s, ttft 447.749896ms)
+
+####################################################################################################
+

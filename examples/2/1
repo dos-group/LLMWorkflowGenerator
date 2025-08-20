@@ -1,0 +1,64 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please tell me the current temperature
+
+####################################################################################################
+
+
+
+```python
+# Get the current temperature using the provided API
+current_temperature = get_temperature()
+
+# Prepare the output text
+output_text = f"The current temperature is {current_temperature} degrees."
+
+# Print the screen with the current temperature
+print_screen(output_text)
+
+# Optionally, use the voice to say the current temperature
+play_voice(output_text)
+```
+
+####################################################################################################
+
+
+# Get the current temperature using the provided API
+current_temperature = get_temperature()
+
+# Prepare the output text
+output_text = f"The current temperature is {current_temperature} degrees."
+
+# Print the screen with the current temperature
+print_screen(output_text)
+
+# Optionally, use the voice to say the current temperature
+play_voice(output_text)
+
+
+####################################################################################################
+
+Execute "get_temperature" and arguments 
+Execute "print_screen" and arguments "The current temperature is 37 degrees."
+Execute "play_voice" and arguments "The current temperature is 37 degrees."
+
+####################################################################################################
+
+Success (total 1.598755469s, ttft 474.64099ms)
+
+####################################################################################################
+

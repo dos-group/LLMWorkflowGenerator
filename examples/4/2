@@ -1,0 +1,65 @@
+####################################################################################################
+
+function find_file_id(expression: String): Integer|null
+function find_contact_id(expression: String): Integer|null
+function find_contact_email(contact_id: Integer): String|null
+function play_voice(text: String): void
+function ask_question(question: String): String
+function play_audio_file(file: File): void
+function send_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function receive_email(email: String, subject: String, text: String, attachments: Collection<Integer>): void
+function print_screen(text: String): void
+function get_temperature(): Integer
+function shell(command: String): String
+
+####################################################################################################
+
+https://api.openai.com/v1/chat/completions gpt-4o-mini Please tell me all files in my home directory
+
+####################################################################################################
+
+
+
+```python
+# Assuming that there is a way to list files in a directory via the available API,
+# we will use the shell command to execute a system command to list files.
+
+# Define the command to list files in the home directory
+command = "ls ~"  # For Unix-like systems; use `dir %userprofile%` for Windows
+
+# Execute the command and capture the output
+file_list = shell(command)
+
+# Print the result to the screen
+print_screen(file_list)
+```
+
+####################################################################################################
+
+
+# Assuming that there is a way to list files in a directory via the available API,
+# we will use the shell command to execute a system command to list files.
+
+# Define the command to list files in the home directory
+command = "ls ~"  # For Unix-like systems; use `dir %userprofile%` for Windows
+
+# Execute the command and capture the output
+file_list = shell(command)
+
+# Print the result to the screen
+print_screen(file_list)
+
+
+####################################################################################################
+
+Execute "shell" and arguments "ls ~"
+Execute "print_screen" and arguments "Document 0
+Document 1
+Document 2"
+
+####################################################################################################
+
+Success (total 1.6546625s, ttft 383.026667ms)
+
+####################################################################################################
+

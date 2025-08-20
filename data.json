@@ -1,0 +1,4 @@
+{
+    "model": "falcon-h1-3b-instruct",
+    "prompt": "Write a python 3 hello world function and execute it"
+}
