@@ -1,11 +1,24 @@
 # LLMWorkflowGenerator
 
-## Dependencies Overview
+This repository investigates the transformation of natural language into executable workflows for mobile phone and assistance applications.
+The approach uses an imperative intermediate representation as a bridge between natural language and the respective execution environments on mobile devices.
 
-```
-Python 3
-virtualenv
-```
+
+## Repository Structure
+
+### main.py
+
+Main script, which contains the required classes for the `FunctionTable`, the implementation of Android-related functions for playing audio, as well as the glue
+code for the external LLM service.
+
+### files
+
+Collection of static files of exemplary sound tracks used for for showcasing.
+
+### outputs
+
+Collection of outputs for the experiments.
+
 
 ## Environment Variables Overview
 
@@ -16,7 +29,19 @@ virtualenv
 | MODEL_NAME        | LLM model name                            | gpt-4o-mini                                |
 | MODEL_TEMPERATURE | LLM model temperature                     | 0                                          |
 
-## Environment Setup
+## Environment Setup (Android)
+
+- Install [Termux](https://f-droid.org/packages/com.termux/)
+- Install [Termux::API](https://f-droid.org/packages/com.termux.api/)
+- Open Termux
+
+``` shell
+pkg update
+pkg upgrade -y
+pkg install -y termux-api python3 git
+```
+
+## Environment Setup (virtualenv)
 
 ```shell
 virtualenv environment
@@ -27,8 +52,8 @@ pip3 install -r requirements.txt
 ## Execution Setup
 
 ```shell 
-export OPENAI_KEY=...
-export MODEL=gpt4-4o-mini
+export ENDPOINT_KEY=...
+export MODEL_NAME=gpt-4o-mini
 
 source environment/bin/activate
 
@@ -42,4 +67,11 @@ echo "Please send my car title to my insurance company" | python3 main.py
 echo "Please tell me the current temperature" | python3 main.py
 echo "Please play the song beat it by michael jackson" | python3 main.py
 echo "Please tell me all files in my home directory" | python3 main.py
+```
+
+## Execute Experiments
+
+```shell
+python3 main.py experiments
+
 ```

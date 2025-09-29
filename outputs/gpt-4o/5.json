@@ -1,0 +1,118 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "find_files",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "*"
+                ],
+                "keyword_arguments": {},
+                "return_value": [
+                    "File0",
+                    "File1",
+                    "File2",
+                    "File3",
+                    "File4"
+                ],
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File0"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File1"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File2"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File3"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "File4"
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef list_all_files_in_current_directory():\n    # Use the find_files function with a wildcard expression to find all files\n    files = find_files(\"*\")\n    # Print each file name\n    for file in files:\n        print(file)\n\n# Call the function\nlist_all_files_in_current_directory()\n```",
+    "generated_code": "\ndef list_all_files_in_current_directory():\n    # Use the find_files function with a wildcard expression to find all files\n    files = find_files(\"*\")\n    # Print each file name\n    for file in files:\n        print(file)\n\n# Call the function\nlist_all_files_in_current_directory()\n",
+    "response_time_in_seconds": 1.889654948,
+    "time_to_first_token_in_milliseconds": 619.529896,
+    "prompt": "Please tell me all files in the current directory"
+}

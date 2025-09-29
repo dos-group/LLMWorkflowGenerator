@@ -1,0 +1,48 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "shell",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "ssh -p 2222 127.0.0.1 'sudo apt-get update && sudo apt-get install -y nginx'"
+                ],
+                "keyword_arguments": {},
+                "return_value": "",
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    ""
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef install_nginx_on_remote_machine():\n    command = \"ssh -p 2222 127.0.0.1 'sudo apt-get update && sudo apt-get install -y nginx'\"\n    result = shell(command)\n    print(result)\n\ninstall_nginx_on_remote_machine()\n```",
+    "generated_code": "\ndef install_nginx_on_remote_machine():\n    command = \"ssh -p 2222 127.0.0.1 'sudo apt-get update && sudo apt-get install -y nginx'\"\n    result = shell(command)\n    print(result)\n\ninstall_nginx_on_remote_machine()\n",
+    "response_time_in_seconds": 5.084214011,
+    "time_to_first_token_in_milliseconds": 726.329584,
+    "prompt": "Please install nginx on the machine with the address 127.0.0.1:2222 running Debian GNU/Linux"
+}

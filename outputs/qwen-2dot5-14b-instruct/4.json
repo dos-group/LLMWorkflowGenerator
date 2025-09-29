@@ -1,0 +1,48 @@
+{
+    "status": "success",
+    "execution": {
+        "context": {
+            "seed": 18446744073709551615,
+            "get_test_case": {}
+        },
+        "trace": [
+            {
+                "name": "query_llm",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [],
+                "keyword_arguments": {
+                    "query": "Which is the largest city in Germany?"
+                },
+                "return_value": "The largest city in Germany is Berlin. It is not only the country's capital but also its most populous city. However, if we consider the city proper and metropolitan areas separately, the metropolitan area of Frankfurt is economically significant, but in terms of population, Berlin is the largest.",
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            },
+            {
+                "name": "print",
+                "before_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                },
+                "arguments": [
+                    "The largest city in Germany is Berlin. It is not only the country's capital but also its most populous city. However, if we consider the city proper and metropolitan areas separately, the metropolitan area of Frankfurt is economically significant, but in terms of population, Berlin is the largest."
+                ],
+                "keyword_arguments": {},
+                "return_value": null,
+                "after_context": {
+                    "seed": 18446744073709551615,
+                    "get_test_case": {}
+                }
+            }
+        ]
+    },
+    "output": "```python\ndef largest_city_in_germany():\n    query = \"Which is the largest city in Germany?\"\n    response = query_llm(query=query)\n    print(response)\n\nlargest_city_in_germany()\n```",
+    "generated_code": "\ndef largest_city_in_germany():\n    query = \"Which is the largest city in Germany?\"\n    response = query_llm(query=query)\n    print(response)\n\nlargest_city_in_germany()\n",
+    "response_time_in_seconds": 2.366231302,
+    "time_to_first_token_in_milliseconds": 385.947188,
+    "prompt": "Which is the largest city in germany?"
+}
